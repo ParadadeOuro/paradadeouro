@@ -32,13 +32,8 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex flex-col items-start group">
-            <span className="font-display text-2xl lg:text-3xl font-bold tracking-widest text-brand-gold group-hover:text-brand-tan transition-colors">
-              PARADA DE OURO
-            </span>
-            <span className="text-[10px] tracking-[0.3em] font-sans text-brand-tan uppercase mt-0.5">
-              Premium Western Wear
-            </span>
+          <a href="/" className="flex items-center group">
+            <img src="/logo.jpg" alt="Parada de Ouro" className="h-12 w-auto" />
           </a>
 
           {/* Desktop Nav Links */}
