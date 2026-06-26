@@ -3,71 +3,33 @@
 import { useState } from "react";
 import { Star, ShoppingBag, Eye, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 const products = [
   {
     id: 1,
-    name: "Chapéu Eldorado Feltro Nobre",
-    category: "chapeus",
-    price: "R$ 1.490,00",
+    name: "Caneca Térmica Rústica",
+    category: "acessorios",
+    price: "R$ 97,50",
     rating: 5,
     tag: "Exclusivo",
-    image: "https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?auto=format&fit=crop&q=80&w=600",
+    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/cliente_3a7d0d43-999e-4f1d-b5f6-fe09c489b351.png?v=1781103632",
+    slug: "caneca-homem-de-respeito-times",
   },
   {
     id: 2,
-    name: "Bota Chelsea Mangalarga Imperial",
+    name: "Pantufa Texana Bota Cowboy",
     category: "botas",
-    price: "R$ 1.890,00",
+    price: "R$ 97,90",
     rating: 5,
     tag: "Mais Vendido",
-    image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    id: 3,
-    name: "Cinto Fivela Ouro Velho",
-    category: "cintos",
-    price: "R$ 780,00",
-    rating: 4,
-    tag: "Edição Limitada",
-    image: "https://images.unsplash.com/photo-1624224971170-2f84fed5eb5e?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    id: 4,
-    name: "Camisa de Linho Fazendeiro",
-    category: "vestuario",
-    price: "R$ 520,00",
-    rating: 5,
-    tag: "Novo",
-    image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    id: 5,
-    name: "Bota Texana Tradicional Ouro",
-    category: "botas",
-    price: "R$ 2.450,00",
-    rating: 5,
-    tag: "Exclusivo",
-    image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    id: 6,
-    name: "Chapéu Fedora Pantanal Tan",
-    category: "chapeus",
-    price: "R$ 1.150,00",
-    rating: 4,
-    tag: "Novo",
-    image: "https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&q=80&w=600",
+    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/pantufa-texana-marrom-1-BwtUpJUt.webp?v=1781105203",
+    slug: "pantufa-texana-bota-cowboy",
   },
 ];
 
 export default function ProductGrid() {
-  const [activeTab, setActiveTab] = useState("todos");
   const [favorites, setFavorites] = useState<number[]>([]);
-
-  const filteredProducts = activeTab === "todos"
-    ? products
-    : products.filter(p => p.category === activeTab);
 
   const toggleFavorite = (id: number) => {
     if (favorites.includes(id)) {
@@ -98,36 +60,13 @@ export default function ProductGrid() {
           </p>
         </div>
 
-        {/* Tab Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {[
-            { id: "todos", label: "Ver Tudo" },
-            { id: "chapeus", label: "Chapéus" },
-            { id: "botas", label: "Botas" },
-            { id: "cintos", label: "Cintos" },
-            { id: "vestuario", label: "Vestuário" }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 ${
-                activeTab === tab.id
-                  ? "bg-brand-gold text-brand-brown"
-                  : "bg-brand-offwhite/5 border border-brand-offwhite/10 text-brand-offwhite hover:bg-brand-offwhite/10 hover:border-brand-gold/40"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
         {/* Products Grid */}
         <motion.div 
           layout
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence mode="popLayout">
-            {filteredProducts.map((product) => (
+            {products.map((product) => (
               <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -139,12 +78,14 @@ export default function ProductGrid() {
               >
                 {/* Product Image Area */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-brand-brown/50 mb-6">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                    style={{ backgroundImage: `url('${product.image}')` }}
-                  />
+                  <Link href={`/product/${product.slug}`} className="absolute inset-0 z-0">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+                      style={{ backgroundImage: `url('${product.image}')` }}
+                    />
+                  </Link>
                   {/* Subtle vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Badges & Icons */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -174,11 +115,11 @@ export default function ProductGrid() {
                   </div>
 
                   {/* Add to Cart Overlay */}
-                  <div className="absolute bottom-4 left-4 right-4 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <button className="w-full py-3 bg-brand-gold hover:bg-brand-tan text-brand-brown text-xs font-bold tracking-widest uppercase rounded-sm shadow-md transition-all flex items-center justify-center gap-2">
+                  <div className="absolute bottom-4 left-4 right-4 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
+                    <Link href={`/product/${product.slug}`} className="w-full py-3 bg-brand-gold hover:bg-brand-tan text-brand-brown text-xs font-bold tracking-widest uppercase rounded-sm shadow-md transition-all flex items-center justify-center gap-2">
                       <ShoppingBag className="w-4 h-4" />
-                      Adicionar à Sacola
-                    </button>
+                      Comprar Agora
+                    </Link>
                   </div>
                 </div>
 
@@ -196,9 +137,11 @@ export default function ProductGrid() {
                       />
                     ))}
                   </div>
-                  <h3 className="font-display text-lg lg:text-xl font-medium tracking-tight text-brand-offwhite group-hover:text-brand-gold transition-colors duration-300 mb-2">
-                    {product.name}
-                  </h3>
+                  <Link href={`/product/${product.slug}`}>
+                    <h3 className="font-display text-lg lg:text-xl font-medium tracking-tight text-brand-offwhite group-hover:text-brand-gold transition-colors duration-300 mb-2">
+                      {product.name}
+                    </h3>
+                  </Link>
                   <p className="text-base font-semibold text-brand-tan tracking-wide">
                     {product.price}
                   </p>

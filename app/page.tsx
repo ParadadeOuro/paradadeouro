@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FeaturedCategories from "@/components/FeaturedCategories";
 import ProductGrid from "@/components/ProductGrid";
 import BrandStory from "@/components/BrandStory";
 import Newsletter from "@/components/Newsletter";
@@ -12,7 +11,6 @@ export default function Home() {
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        <FeaturedCategories />
         <ProductGrid />
         <BrandStory />
         <Newsletter />

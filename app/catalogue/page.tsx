@@ -25,37 +25,52 @@ const CSV_URL =
 /**
  * Minimal RFC-4180 CSV row parser that respects quoted fields.
  */
-function parseCsvRow(row: string): string[] {
-  const result: string[] = [];
+function parseCsvRows(csvText: string): string[][] {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentVal = "";
   let inQuotes = false;
-  let current = "";
-
-  for (let i = 0; i < row.length; i++) {
-    const ch = row[i];
+  
+  for (let i = 0; i < csvText.length; i++) {
+    const ch = csvText[i];
+    const nextCh = csvText[i + 1];
+    
     if (ch === '"') {
-      if (inQuotes && row[i + 1] === '"') {
-        // Escaped double-quote inside a quoted field
-        current += '"';
+      if (inQuotes && nextCh === '"') {
+        currentVal += '"';
         i++;
       } else {
         inQuotes = !inQuotes;
       }
-    } else if (ch === "," && !inQuotes) {
-      result.push(current.trim());
-      current = "";
+    } else if (ch === ',' && !inQuotes) {
+      currentRow.push(currentVal.trim());
+      currentVal = "";
+    } else if ((ch === '\r' || ch === '\n') && !inQuotes) {
+      if (ch === '\r' && nextCh === '\n') {
+        i++;
+      }
+      currentRow.push(currentVal.trim());
+      rows.push(currentRow);
+      currentRow = [];
+      currentVal = "";
     } else {
-      current += ch;
+      currentVal += ch;
     }
   }
-  result.push(current.trim());
-  return result;
+  
+  if (currentRow.length > 0 || currentVal) {
+    currentRow.push(currentVal.trim());
+    rows.push(currentRow);
+  }
+  
+  return rows;
 }
 
 function parseCsv(text: string): Product[] {
-  const lines = text.split("\n").map((l) => l.replace(/\r$/, ""));
-  if (lines.length < 2) return [];
+  const rows = parseCsvRows(text);
+  if (rows.length < 2) return [];
 
-  const header = parseCsvRow(lines[0]).map((h) => h.trim().toLowerCase());
+  const header = rows[0].map((h) => h.trim().toLowerCase());
 
   // Column indices (Shopify export format)
   const iHandle = header.findIndex((h) => h === "");            // col 0 (handle, no name in header row)
@@ -69,8 +84,8 @@ function parseCsv(text: string): Product[] {
 
   const productMap = new Map<string, Product>();
 
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCsvRow(lines[i]);
+  for (let i = 1; i < rows.length; i++) {
+    const cols = rows[i];
     if (!cols || cols.length < 5) continue;
 
     const handle = cols[iHandle >= 0 ? iHandle : 0]?.trim();

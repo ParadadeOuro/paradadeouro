@@ -13,23 +13,45 @@ import { motion, AnimatePresence } from "framer-motion";
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/1j_fTweGpNZZ_zeb2Op-aEjuwsBHIpFgNWRCajl-aSSY/export?format=csv";
 
-function parseCsvRow(row: string): string[] {
-  const result: string[] = [];
+function parseCsv(csvText: string): string[][] {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentVal = "";
   let inQuotes = false;
-  let current = "";
-  for (let i = 0; i < row.length; i++) {
-    const ch = row[i];
+  
+  for (let i = 0; i < csvText.length; i++) {
+    const ch = csvText[i];
+    const nextCh = csvText[i + 1];
+    
     if (ch === '"') {
-      if (inQuotes && row[i + 1] === '"') { current += '"'; i++; }
-      else inQuotes = !inQuotes;
-    } else if (ch === "," && !inQuotes) {
-      result.push(current.trim()); current = "";
+      if (inQuotes && nextCh === '"') {
+        currentVal += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === ',' && !inQuotes) {
+      currentRow.push(currentVal.trim());
+      currentVal = "";
+    } else if ((ch === '\r' || ch === '\n') && !inQuotes) {
+      if (ch === '\r' && nextCh === '\n') {
+        i++;
+      }
+      currentRow.push(currentVal.trim());
+      rows.push(currentRow);
+      currentRow = [];
+      currentVal = "";
     } else {
-      current += ch;
+      currentVal += ch;
     }
   }
-  result.push(current.trim());
-  return result;
+  
+  if (currentRow.length > 0 || currentVal) {
+    currentRow.push(currentVal.trim());
+    rows.push(currentRow);
+  }
+  
+  return rows;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -58,10 +80,19 @@ function stripHtml(html: string): string {
 }
 
 function parseProduct(csvText: string, handle: string): Product | null {
-  const lines = csvText.split("\n").map((l) => l.replace(/\r$/, ""));
-  if (lines.length < 2) return null;
+  const rows = parseCsv(csvText);
+  if (rows.length < 2) return null;
 
-  const header = parseCsvRow(lines[0]).map((h) => h.trim().toLowerCase());
+  // Find the header line, ignoring markdown frontmatter if present
+  let headerRowIndex = 0;
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].includes("Title") && rows[i].includes("Body (HTML)")) {
+      headerRowIndex = i;
+      break;
+    }
+  }
+
+  const header = rows[headerRowIndex].map((h) => h.trim().toLowerCase());
 
   const iHandle    = 0;
   const iTitle     = header.indexOf("title");
@@ -84,9 +115,12 @@ function parseProduct(csvText: string, handle: string): Product | null {
   let product: Product | null = null;
   const seenImages = new Set<string>();
   const optionNameSet = new Set<string>();
+  let opt1Name = "";
+  let opt2Name = "";
+  let opt3Name = "";
 
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCsvRow(lines[i]);
+  for (let i = headerRowIndex + 1; i < rows.length; i++) {
+    const cols = rows[i];
     if (!cols || cols.length < 5) continue;
     if (cols[iHandle]?.trim() !== handle) continue;
 
@@ -105,6 +139,14 @@ function parseProduct(csvText: string, handle: string): Product | null {
       };
     }
 
+    // Capture option names dynamically as they can appear in different rows
+    const o1 = cols[iOpt1Name]?.trim();
+    if (o1) { opt1Name = o1; optionNameSet.add(o1); }
+    const o2 = cols[iOpt2Name]?.trim();
+    if (o2) { opt2Name = o2; optionNameSet.add(o2); }
+    const o3 = cols[iOpt3Name]?.trim();
+    if (o3) { opt3Name = o3; optionNameSet.add(o3); }
+
     // Collect images
     const imgSrc = cols[iImgSrc]?.trim();
     if (imgSrc && !seenImages.has(imgSrc)) {
@@ -119,25 +161,27 @@ function parseProduct(csvText: string, handle: string): Product | null {
 
     // Collect variant options
     const options: Record<string, string> = {};
-    const addOpt = (nameIdx: number, valIdx: number) => {
-      const n = cols[nameIdx]?.trim();
-      const v = cols[valIdx]?.trim();
-      if (n && v) { options[n] = v; optionNameSet.add(n); }
-    };
-    addOpt(iOpt1Name, iOpt1Val);
-    addOpt(iOpt2Name, iOpt2Val);
-    addOpt(iOpt3Name, iOpt3Val);
+    const v1 = cols[iOpt1Val]?.trim();
+    if (opt1Name && v1) options[opt1Name] = v1;
+    const v2 = cols[iOpt2Val]?.trim();
+    if (opt2Name && v2) options[opt2Name] = v2;
+    const v3 = cols[iOpt3Val]?.trim();
+    if (opt3Name && v3) options[opt3Name] = v3;
 
+    const sku = cols[iSku]?.trim() || "";
     const price = parseFloat((cols[iPrice] || "0").replace(",", "."));
     const compare = parseFloat((cols[iCompare] || "0").replace(",", "."));
 
-    product.variants.push({
-      sku: cols[iSku]?.trim() || "",
-      price: isNaN(price) ? 0 : price,
-      compareAtPrice: isNaN(compare) ? 0 : compare,
-      options,
-      image: varImg || imgSrc || "",
-    });
+    // Pushing variant if SKU or first option value is present to exclude image-only rows
+    if (sku || v1) {
+      product.variants.push({
+        sku,
+        price: isNaN(price) ? 0 : price,
+        compareAtPrice: isNaN(compare) ? 0 : compare,
+        options,
+        image: varImg || imgSrc || "",
+      });
+    }
   }
 
   if (product) {
