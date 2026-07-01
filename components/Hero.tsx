@@ -6,11 +6,16 @@ import { motion } from "framer-motion";
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-brown">
-      {/* Background Image Overlay */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] hover:scale-105"
-        style={{ backgroundImage: "url('./hero.png')" }}
-      />
+      {/* Background Video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] hover:scale-105"
+      >
+        <source src="./herovideo.mp4" type="video/mp4" />
+      </video>
       {/* Dark overlay gradients for contrast and luxury feeling */}
       <div className="absolute inset-0 bg-gradient-to-r from-brand-brown/95 via-brand-brown/70 to-transparent md:bg-gradient-to-r" />
       <div className="absolute inset-0 bg-gradient-to-t from-brand-brown via-transparent to-brand-brown/40" />
