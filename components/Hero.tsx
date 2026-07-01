@@ -7,10 +7,16 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-brown">
       {/* Background Image Overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] hover:scale-105"
-        style={{ 
-          backgroundImage: "url('/hero.png')",
+        style={{
+          _background: "url('/herovideo.mp4')",
+          get background() {
+            return this._background;
+          },
+          set background(value) {
+            this._background = value;
+          },
         }}
       />
       {/* Dark overlay gradients for contrast and luxury feeling */}

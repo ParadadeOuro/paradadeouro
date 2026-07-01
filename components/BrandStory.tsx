@@ -8,7 +8,7 @@ export default function BrandStory() {
     <section id="nossa-história" className="py-24 bg-brand-offwhite text-brand-brown overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          
+
           {/* Text Content Area */}
           <div className="lg:col-span-6 space-y-8">
             <div className="space-y-3">
@@ -22,7 +22,7 @@ export default function BrandStory() {
                 Do Coração do Campo ao Luxo Western
               </h2>
             </div>
-            
+
             <p className="text-base text-brand-charcoal/80 font-light leading-relaxed">
               Nascemos da paixão pelo estilo de vida do agronegócio e pela rica cultura dos rodeios brasileiros. A Parada de Ouro surgiu para redefinir o conceito de moda country no Brasil, unindo a robustez do campo à sofisticação das passarelas de luxo.
             </p>
@@ -48,7 +48,7 @@ export default function BrandStory() {
             </div>
 
             <div className="pt-4">
-              <a 
+              <a
                 href="#vitrine"
                 className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-brand-brown hover:text-brand-gold transition-colors duration-300 group"
               >
@@ -67,10 +67,10 @@ export default function BrandStory() {
               transition={{ duration: 0.8 }}
               className="relative aspect-[4/5] w-full max-w-lg mx-auto overflow-hidden rounded-sm shadow-xl"
             >
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
-                style={{ 
-                  backgroundImage: "url('https://images.unsplash.com/photo-1534215754734-18e55d13ce35?auto=format&fit=crop&q=80&w=800')",
+                style={{
+                  backgroundImage: "url('https://images.unsplash.com/photo-1624125278860-381b6acd3b44?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
                 }}
               />
               {/* Elegant Gold-bordered inner frame */}
