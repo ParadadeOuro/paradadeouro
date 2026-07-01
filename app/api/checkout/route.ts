@@ -22,6 +22,32 @@ interface CheckoutBody {
   items: OrderItem[];
 }
 
+function buildProviderPayload(body: CheckoutBody, orderId: string, total: number, checkoutId: string) {
+  return {
+    checkoutId,
+    orderId,
+    customer: {
+      name: body.name,
+      email: body.email,
+      phone: body.phone,
+    },
+    shipping: {
+      address: body.address,
+      city: body.city,
+      state: body.state,
+      zipCode: body.zipCode,
+    },
+    items: body.items.map((item) => ({
+      handle: item.handle,
+      title: item.title,
+      quantity: item.quantity,
+      unitPrice: item.price,
+      totalPrice: item.price * item.quantity,
+    })),
+    total,
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: CheckoutBody = await request.json();
@@ -38,6 +64,9 @@ export async function POST(request: NextRequest) {
 
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
+    const checkoutId = process.env.CHECKOUT_API_ID || "8856b8ae-b866-4e31-8f8b-61283ccb1aba";
+    const checkoutApiUrl = process.env.CHECKOUT_API_URL;
+    const checkoutRedirectUrl = process.env.CHECKOUT_REDIRECT_URL;
 
     // 1. Upsert user by email
     const { data: user, error: userError } = await supabase
@@ -95,7 +124,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: itemsError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ orderId: order.id, success: true });
+    let checkoutUrl: string | undefined;
+
+    if (checkoutApiUrl) {
+      try {
+        const providerRes = await fetch(checkoutApiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(process.env.CHECKOUT_API_TOKEN
+              ? { Authorization: `Bearer ${process.env.CHECKOUT_API_TOKEN}` }
+              : {}),
+          },
+          body: JSON.stringify(buildProviderPayload(body, order.id, total, checkoutId)),
+        });
+
+        if (providerRes.ok) {
+          const providerData = await providerRes.json().catch(() => null);
+          checkoutUrl = providerData?.checkoutUrl || providerData?.url || providerData?.paymentUrl;
+        } else {
+          const providerData = await providerRes.json().catch(() => null);
+          console.error("Checkout provider error:", providerData || providerRes.statusText);
+        }
+      } catch (providerError) {
+        console.error("Checkout provider request failed:", providerError);
+      }
+    }
+
+    if (!checkoutUrl && checkoutRedirectUrl) {
+      const separator = checkoutRedirectUrl.includes("?") ? "&" : "?";
+      checkoutUrl = `${checkoutRedirectUrl}${separator}checkoutId=${encodeURIComponent(checkoutId)}&orderId=${order.id}`;
+    }
+
+    return NextResponse.json({
+      orderId: order.id,
+      success: true,
+      checkoutId,
+      ...(checkoutUrl ? { checkoutUrl } : {}),
+    });
   } catch (err) {
     console.error("Checkout error:", err);
     return NextResponse.json({ error: "Erro interno no servidor." }, { status: 500 });

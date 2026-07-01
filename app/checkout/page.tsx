@@ -63,6 +63,12 @@ export default function CheckoutPage() {
       if (!res.ok) throw new Error(data.error || "Erro ao processar pedido.");
 
       clearCart();
+
+      if (data.checkoutUrl) {
+        window.location.assign(data.checkoutUrl);
+        return;
+      }
+
       router.push(`/thank-you?orderId=${data.orderId}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erro desconhecido.");
