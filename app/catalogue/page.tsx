@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Product {
   handle: string;
@@ -18,9 +19,10 @@ interface Product {
 }
 
 // ─── CSV fetch & parse ────────────────────────────────────────────────────────
-// Uses Google Sheets public CSV export
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/1j_fTweGpNZZ_zeb2Op-aEjuwsBHIpFgNWRCajl-aSSY/export?format=csv";
+// Supabase storage CSV fetch configuration
+const SUPABASE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET;
+const SUPABASE_CSV_PATH = process.env.NEXT_PUBLIC_SUPABASE_CSV_PATH; // e.g., "catalogue.csv"
+
 
 /**
  * Minimal RFC-4180 CSV row parser that respects quoted fields.
@@ -144,9 +146,16 @@ export default function CataloguePage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(CSV_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
+        // Fetch CSV from Supabase public storage
+        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET;
+const SUPABASE_CSV_PATH = process.env.NEXT_PUBLIC_SUPABASE_CSV_PATH;
+        
+        if (!SUPABASE_URL) throw new Error('Supabase URL not set');
+        const publicCsvUrl = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${SUPABASE_CSV_PATH}`;
+        const res = await fetch(publicCsvUrl);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
       const data = parseCsv(text);
       setProducts(data);
       setFiltered(data);
