@@ -8,6 +8,9 @@
   --brand-offwhite: #F8F5F0;
   --brand-charcoal: #232323;
   --brand-gold: #C9A76A;
+
+  /* Announcement bar fixed height — used by Navbar offset and Hero padding */
+  --announcement-h: 32px;
 }
 
 @theme {
@@ -46,3 +49,17 @@ body {
   background: var(--brand-brown);
 }
 
+/* ── Announcement Bar Marquee ─────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}

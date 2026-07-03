@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, User, ShoppingBag, Menu, X, ArrowRight } from "lucide-react";
+import { ShoppingBag, Menu, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/lib/cartStore";
+import AnnouncementBar from "@/components/AnnouncementBar";
+import NavbarSearch from "@/components/NavbarSearch";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,13 +23,18 @@ export default function Navbar() {
 
   return (
     <>
+      {/* ── Announcement Bar ── */}
+      <div className="fixed top-0 left-0 w-full z-[60]">
+        <AnnouncementBar />
+      </div>
+
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled
-            ? "bg-brand-brown/95 backdrop-blur-md py-4 shadow-lg border-b border-brand-tan/10 text-brand-offwhite"
-            : "bg-gradient-to-b from-brand-brown/80 to-transparent py-6 text-brand-offwhite"
+        className={`fixed left-0 w-full z-50 transition-all duration-500 ${isScrolled
+            ? "bg-brand-brown/95 backdrop-blur-md py-4 shadow-lg border-b border-brand-tan/10 text-brand-offwhite top-[32px]"
+            : "bg-gradient-to-b from-brand-brown/80 to-transparent py-6 text-brand-offwhite top-[32px]"
           }`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
@@ -58,10 +65,11 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Icons & CTA */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-4">
+            <NavbarSearch />
             <button
               onClick={openCart}
-              className="p-2 hover:text-brand-gold transition-colors relative"
+              className="p-2 hover:text-brand-gold transition-colors relative cursor-pointer"
               aria-label="Sacola"
             >
               <ShoppingBag className="w-5 h-5" />
@@ -81,10 +89,11 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center space-x-4">
+          <div className="flex md:hidden items-center space-x-3">
+            <NavbarSearch />
             <button
               onClick={openCart}
-              className="p-2 relative"
+              className="p-2 relative cursor-pointer"
               aria-label="Sacola"
             >
               <ShoppingBag className="w-5 h-5" />
@@ -96,7 +105,7 @@ export default function Navbar() {
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-brand-offwhite"
+              className="p-2 text-brand-offwhite cursor-pointer"
               aria-label="Abrir Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

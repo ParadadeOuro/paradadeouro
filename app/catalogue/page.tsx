@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { buildCsvUrl } from "@/lib/catalogueParser";
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -146,14 +147,9 @@ export default function CataloguePage() {
     setLoading(true);
     setError(null);
     try {
-        // Fetch CSV from Supabase public storage
-        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET;
-const SUPABASE_CSV_PATH = process.env.NEXT_PUBLIC_SUPABASE_CSV_PATH;
-        
-        if (!SUPABASE_URL) throw new Error('Supabase URL not set');
-        const publicCsvUrl = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${SUPABASE_CSV_PATH}`;
-        const res = await fetch(publicCsvUrl);
+        const url = buildCsvUrl();
+        if (!url) throw new Error('Supabase configuration missing');
+        const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
       const data = parseCsv(text);

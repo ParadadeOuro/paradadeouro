@@ -8,10 +8,9 @@ import { useCart } from "@/lib/cartStore";
 import { ChevronLeft, ShoppingBag, Check, Star } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { buildCsvUrl } from "@/lib/catalogueParser";
 
-// ─── CSV helpers (same as catalogue) ─────────────────────────────────────────
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/1j_fTweGpNZZ_zeb2Op-aEjuwsBHIpFgNWRCajl-aSSY/export?format=csv";
+
 
 function parseCsv(csvText: string): string[][] {
   const rows: string[][] = [];
@@ -213,7 +212,9 @@ export default function ProductPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(CSV_URL);
+      const url = buildCsvUrl();
+      if (!url) throw new Error("Supabase configuration missing");
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       const parsed = parseProduct(text, handle);
