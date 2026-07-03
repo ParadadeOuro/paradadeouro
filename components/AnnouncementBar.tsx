@@ -3,12 +3,10 @@
 const messages = [
   "✦ Produtos com até 50% OFF",
   "✦ Frete para todo o Brasil",
-  "✦ Troca grátis em até 30 dias",
   "✦ Produtos com até 50% OFF",
   "✦ Pagamento 100% seguro",
   "✦ Produtos com até 50% OFF",
   "✦ Frete para todo o Brasil",
-  "✦ Troca grátis em até 30 dias",
   "✦ Produtos com até 50% OFF",
   "✦ Pagamento 100% seguro",
 ];
