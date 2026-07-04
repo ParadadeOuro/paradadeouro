@@ -1,105 +1,139 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Star, ShoppingBag, Eye, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Star, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { buildCsvUrl, parseCatalogueProducts, CatalogueProduct } from "@/lib/catalogueParser";
 
-const products = [
-  {
-    id: 1,
-    name: "Caneca Térmica Rústica",
-    category: "acessorios",
-    price: "R$ 97,50",
-    rating: 5,
-    tag: "Exclusivo",
-    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/cliente_3a7d0d43-999e-4f1d-b5f6-fe09c489b351.png?v=1781103632",
-    slug: "caneca-homem-de-respeito-times",
-  },
-  {
-    id: 2,
-    name: "Pantufa Texana Bota Cowboy",
-    category: "botas",
-    price: "R$ 97,90",
-    rating: 5,
-    tag: "Mais Vendido",
-    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/pantufa-texana-marrom-1-BwtUpJUt.webp?v=1781105203",
-    slug: "pantufa-texana-bota-cowboy",
-  },
-  {
-    id: 3,
-    name: "Jaqueta Masculina Ariat Nylon",
-    category: "jaquetas",
-    price: "R$ 97,90",
-    rating: 5,
-    tag: "Coleção Frio",
-    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/ariat-nylon-marrom-1-tMOsz5tf.webp?v=1781105201",
-    slug: "jaqueta-masculina-ariat-nylon-bordado-marrom",
-  },
-  {
-    id: 4,
-    name: "Jaqueta Softshell Feminina",
-    category: "jaquetas",
-    price: "R$ 97,90",
-    rating: 5,
-    tag: "Novidade",
-    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/ariat-softshell-fem-1-DMI5fI3.webp?v=1781105199",
-    slug: "jaqueta-ariat-softshell-importada-feminina",
-  },
-  {
-    id: 5,
-    name: "Jaqueta Ariat Jeans Trucker",
-    category: "jaquetas",
-    price: "R$ 97,90",
-    rating: 5,
-    tag: "Clássico",
-    image: "https://cdn.shopify.com/s/files/1/0787/4769/7349/files/ariat-jeans-1-D1Vs79jD.webp?v=1781105213",
-    slug: "jaqueta-ariat-jeans-importada-masculina",
-  },
+const tabs = [
+  { id: "chapeus", name: "Chapéus" },
+  { id: "botas", name: "Botas" },
+  { id: "cintos", name: "Cintos" },
+  { id: "camisas-denim", name: "Camisas & Denim" },
 ];
 
-export default function ProductGrid() {
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(3);
+const fallbackProducts: Record<string, Partial<CatalogueProduct>[]> = {
+  chapeus: [
+    {
+      handle: "chapeu-feltro-pampa",
+      title: "Chapéu Feltro Pampa Premium",
+      price: "489.00",
+      compareAtPrice: "650.00",
+      image: "/images/categories/chapeus.png",
+      vendor: "Pampa Selaria",
+      type: "Chapéus",
+      tags: "fallback",
+    },
+    {
+      handle: "chapeu-classic-americano",
+      title: "Chapéu Americano Classic Canvas",
+      price: "379.00",
+      compareAtPrice: "499.00",
+      image: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&q=80&w=800",
+      vendor: "Classic Hats",
+      type: "Chapéus",
+      tags: "fallback",
+    }
+  ],
+  cintos: [
+    {
+      handle: "cinto-couro-fivela-ouro",
+      title: "Cinto Couro Legítimo Fivela Ouro",
+      price: "289.00",
+      compareAtPrice: "399.00",
+      image: "/images/categories/cintos.png",
+      vendor: "Parada de Ouro",
+      type: "Cintos",
+      tags: "fallback",
+    },
+    {
+      handle: "cinto-western-entalhado",
+      title: "Cinto Selaria Western Trabalhado",
+      price: "199.00",
+      compareAtPrice: "249.00",
+      image: "https://images.unsplash.com/photo-1624224971170-2f84fed5eb5e?auto=format&fit=crop&q=80&w=800",
+      vendor: "Selaria Dallas",
+      type: "Cintos",
+      tags: "fallback",
+    }
+  ]
+};
 
-  useEffect(() => {
-    const updateItemsPerPage = () => {
-      if (window.innerWidth >= 1024) {
-        setItemsPerPage(3);
-      } else if (window.innerWidth >= 640) {
-        setItemsPerPage(2);
-      } else {
-        setItemsPerPage(1);
-      }
-    };
-    updateItemsPerPage();
-    window.addEventListener("resize", updateItemsPerPage);
-    return () => window.removeEventListener("resize", updateItemsPerPage);
+const mapProductToCategory = (type: string, tags: string = ""): string | null => {
+  const t = type.toLowerCase();
+  const tagList = tags.toLowerCase().split(",").map(x => x.trim());
+  
+  if (t.includes("chapéu") || t.includes("chapeu") || tagList.includes("chapéu") || tagList.includes("chapeu")) {
+    return "chapeus";
+  }
+  if (t.includes("bota") || t.includes("pantufa") || tagList.includes("bota") || tagList.includes("pantufa")) {
+    return "botas";
+  }
+  if (t.includes("cinto") || tagList.includes("cinto")) {
+    return "cintos";
+  }
+  if (t.includes("camisa") || t.includes("denim") || t.includes("jaqueta") || tagList.includes("camisa") || tagList.includes("denim") || tagList.includes("jaqueta")) {
+    return "camisas-denim";
+  }
+  return null;
+};
+
+export default function ProductGrid() {
+  const [activeCategory, setActiveCategory] = useState("chapeus");
+  const [productsByCategory, setProductsByCategory] = useState<Record<string, CatalogueProduct[]>>({
+    chapeus: [],
+    botas: [],
+    cintos: [],
+    "camisas-denim": [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const url = buildCsvUrl();
+      if (!url) throw new Error("Supabase configuration missing");
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      const data = parseCatalogueProducts(text);
+      
+      const grouped: Record<string, CatalogueProduct[]> = {
+        chapeus: [],
+        botas: [],
+        cintos: [],
+        "camisas-denim": [],
+      };
+      
+      data.forEach((p) => {
+        const cat = mapProductToCategory(p.type, p.tags);
+        if (cat && grouped[cat]) {
+          grouped[cat].push(p);
+        }
+      });
+      
+      setProductsByCategory(grouped);
+    } catch (e: unknown) {
+      console.error("Error loading products for home grid:", e);
+      setError(e instanceof Error ? e.message : "Erro desconhecido");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Ensure currentIndex stays within bounds when itemsPerPage changes
   useEffect(() => {
-    setCurrentIndex((prev) => Math.min(prev, Math.max(0, products.length - itemsPerPage)));
-  }, [itemsPerPage]);
+    fetchProducts();
+  }, [fetchProducts]);
 
-  const toggleFavorite = (id: number) => {
-    if (favorites.includes(id)) {
-      setFavorites(favorites.filter((favId) => favId !== id));
-    } else {
-      setFavorites([...favorites, id]);
-    }
-  };
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, products.length - itemsPerPage));
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
-
-  const maxIndex = Math.max(0, products.length - itemsPerPage);
+  // Determine what to show in the active category tab
+  const csvProducts = productsByCategory[activeCategory] || [];
+  // If CSV has no products for this category, use our premium fallbacks
+  const displayProducts = csvProducts.length > 0 
+    ? csvProducts 
+    : (fallbackProducts[activeCategory] || []) as CatalogueProduct[];
 
   return (
     <section id="vitrine" className="py-24 bg-brand-brown text-brand-offwhite overflow-hidden">
@@ -119,98 +153,103 @@ export default function ProductGrid() {
               Peças em Destaque
             </h2>
             <p className="text-sm text-brand-offwhite/60 font-light leading-relaxed">
-              Descubra as criações exclusivas da Parada de Ouro, unindo o melhor da tradição com a inovação em design de moda sertaneja.
+              Explore o melhor da moda country sertaneja de luxo, com produtos selecionados à mão pela Parada de Ouro.
             </p>
-          </div>
-
-          {/* Navigation Controls */}
-          <div className="flex items-center gap-3 self-end md:self-auto">
-            <button
-              onClick={prevSlide}
-              disabled={currentIndex === 0}
-              className={`p-3 rounded-full border border-brand-gold/30 text-brand-gold transition-all duration-300 ${
-                currentIndex === 0
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-brand-gold hover:text-brand-brown hover:border-brand-gold cursor-pointer"
-              }`}
-              aria-label="Anterior"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={nextSlide}
-              disabled={currentIndex >= maxIndex}
-              className={`p-3 rounded-full border border-brand-gold/30 text-brand-gold transition-all duration-300 ${
-                currentIndex >= maxIndex
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-brand-gold hover:text-brand-brown hover:border-brand-gold cursor-pointer"
-              }`}
-              aria-label="Próximo"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
           </div>
         </div>
 
-        {/* Products Carousel Container */}
-        <div className="relative overflow-visible">
-          <div className="overflow-hidden -mx-4 px-4">
-            <motion.div
-              className="flex"
-              animate={{ x: `-${currentIndex * (100 / itemsPerPage)}%` }}
-              transition={{ type: "spring", stiffness: 220, damping: 26 }}
-              style={{ width: `${(products.length / itemsPerPage) * 100}%` }}
-            >
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  style={{ width: `${100 / products.length}%` }}
-                  className="px-4 shrink-0"
-                >
-                  <div className="group relative flex flex-col justify-between bg-brand-offwhite/[0.02] border border-brand-offwhite/5 p-4 rounded-sm hover:border-brand-gold/20 transition-all duration-500 hover:shadow-2xl hover:shadow-black/20 h-full">
+        {/* Category Tabs */}
+        <div className="flex justify-center gap-3 mb-16 flex-wrap">
+          {tabs.map((tab) => {
+            const isActive = activeCategory === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategory(tab.id)}
+                className={`px-6 py-3 text-xs font-bold uppercase tracking-widest rounded-sm border transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? "bg-brand-gold text-brand-brown border-brand-gold shadow-md scale-105"
+                    : "border-brand-gold/30 text-brand-offwhite hover:border-brand-gold hover:text-brand-gold"
+                }`}
+              >
+                {tab.name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="w-12 h-12 rounded-full border-4 border-brand-gold border-t-transparent animate-spin" />
+            <p className="text-brand-gold text-xs tracking-widest uppercase">Carregando Vitrine...</p>
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {!loading && (
+          <motion.div 
+            layout 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]"
+          >
+            <AnimatePresence mode="popLayout">
+              {displayProducts.map((product) => {
+                const hasDiscount = product.compareAtPrice && parseFloat(product.compareAtPrice) > parseFloat(product.price);
+                const discountPct = hasDiscount
+                  ? Math.round(
+                      ((parseFloat(product.compareAtPrice) - parseFloat(product.price)) /
+                        parseFloat(product.compareAtPrice)) *
+                        100
+                    )
+                  : 0;
+
+                const formattedPrice = `R$ ${parseFloat(product.price).toFixed(2).replace(".", ",")}`;
+                const formattedComparePrice = product.compareAtPrice ? `R$ ${parseFloat(product.compareAtPrice).toFixed(2).replace(".", ",")}` : "";
+
+                const isFallback = product.tags === "fallback";
+
+                return (
+                  <motion.div
+                    key={product.handle}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className="group relative flex flex-col justify-between bg-[#2C1A0E]/40 border border-brand-gold/10 p-4 rounded-sm hover:border-brand-gold/30 transition-all duration-500 hover:shadow-2xl hover:shadow-black/40 h-full"
+                  >
                     {/* Product Image Area */}
                     <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-brand-brown/50 mb-6">
-                      <Link href={`/product/${product.slug}`} className="absolute inset-0 z-0">
+                      <Link href={isFallback ? `/catalogue` : `/product/${product.handle}`} className="absolute inset-0 z-0">
                         <div
                           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
                           style={{ backgroundImage: `url('${product.image}')` }}
                         />
                       </Link>
-                      {/* Subtle vignette */}
+                      {/* Vignette overlay */}
                       <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       
-                      {/* Badges & Icons */}
+                      {/* Badges */}
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
-                        {product.tag && (
+                        {isFallback ? (
+                          <span className="px-3 py-1 bg-brand-brown/90 text-brand-gold text-[10px] font-bold tracking-wider uppercase rounded-sm border border-brand-gold/20 backdrop-blur-xs">
+                            Estilo Western
+                          </span>
+                        ) : hasDiscount && (
                           <span className="px-3 py-1 bg-brand-gold/90 text-brand-brown text-[10px] font-bold tracking-wider uppercase rounded-sm backdrop-blur-xs">
-                            {product.tag}
+                            -{discountPct}%
                           </span>
                         )}
                       </div>
 
-                      <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                        <button
-                          onClick={() => toggleFavorite(product.id)}
-                          className="p-2.5 bg-brand-brown/85 hover:bg-brand-gold text-brand-offwhite hover:text-brand-brown rounded-full shadow-md transition-colors cursor-pointer"
-                          aria-label="Favoritar"
-                        >
-                          <Heart
-                            className={`w-4 h-4 ${favorites.includes(product.id) ? "fill-current" : ""}`}
-                          />
-                        </button>
-                        <button
-                          className="p-2.5 bg-brand-brown/85 hover:bg-brand-gold text-brand-offwhite hover:text-brand-brown rounded-full shadow-md transition-colors cursor-pointer"
-                          aria-label="Espiar"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </div>
-
                       {/* Add to Cart Overlay */}
                       <div className="absolute bottom-4 left-4 right-4 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
-                        <Link href={`/product/${product.slug}`} className="w-full py-3 bg-brand-gold hover:bg-brand-tan text-brand-brown text-xs font-bold tracking-widest uppercase rounded-sm shadow-md transition-all flex items-center justify-center gap-2">
+                        <Link 
+                          href={isFallback ? `/catalogue?category=${activeCategory}` : `/product/${product.handle}`} 
+                          className="w-full py-3 bg-brand-gold hover:bg-brand-tan text-brand-brown text-xs font-bold tracking-widest uppercase rounded-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        >
                           <ShoppingBag className="w-4 h-4" />
-                          Comprar Agora
+                          {isFallback ? "Ver no Catálogo" : "Comprar Agora"}
                         </Link>
                       </div>
                     </div>
@@ -221,47 +260,47 @@ export default function ProductGrid() {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-3.5 h-3.5 ${
-                              i < product.rating
-                                ? "fill-brand-gold text-brand-gold"
-                                : "text-brand-offwhite/20"
-                            }`}
+                            className="w-3.5 h-3.5 fill-brand-gold text-brand-gold"
                           />
                         ))}
                       </div>
-                      <Link href={`/product/${product.slug}`}>
+                      <Link href={isFallback ? `/catalogue?category=${activeCategory}` : `/product/${product.handle}`}>
                         <h3 className="font-display text-lg lg:text-xl font-medium tracking-tight text-brand-offwhite group-hover:text-brand-gold transition-colors duration-300 mb-2">
-                          {product.name}
+                          {product.title}
                         </h3>
                       </Link>
-                      <p className="text-base font-semibold text-brand-tan tracking-wide">
-                        {product.price}
-                      </p>
+                      <div className="flex items-baseline gap-2 mt-auto">
+                        <p className="text-base font-semibold text-brand-gold tracking-wide">
+                          {formattedPrice}
+                        </p>
+                        {hasDiscount && (
+                          <p className="text-xs text-brand-offwhite/40 line-through">
+                            {formattedComparePrice}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
-        {/* Pagination Dots */}
-        {maxIndex > 0 && (
-          <div className="flex justify-center items-center gap-2.5 mt-12">
-            {[...Array(maxIndex + 1)].map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-2 transition-all duration-300 rounded-full cursor-pointer ${
-                  currentIndex === index ? "bg-brand-gold w-6" : "bg-brand-offwhite/20 w-2 hover:bg-brand-offwhite/40"
-                }`}
-                aria-label={`Ir para slide ${index + 1}`}
-              />
-            ))}
+        {/* Error State / Fallback Action */}
+        {!loading && error && displayProducts.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-red-400 mb-4">Não foi possível carregar os produtos desta vitrine.</p>
+            <button
+              onClick={fetchProducts}
+              className="px-6 py-2.5 bg-brand-gold text-brand-brown text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-brand-tan transition-colors"
+            >
+              Tentar Novamente
+            </button>
           </div>
         )}
+
       </div>
     </section>
   );
 }
-

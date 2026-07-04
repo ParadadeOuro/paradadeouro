@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { buildCsvUrl } from "@/lib/catalogueParser";
-
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Product {
@@ -23,7 +23,6 @@ interface Product {
 // Supabase storage CSV fetch configuration
 const SUPABASE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET;
 const SUPABASE_CSV_PATH = process.env.NEXT_PUBLIC_SUPABASE_CSV_PATH; // e.g., "catalogue.csv"
-
 
 /**
  * Minimal RFC-4180 CSV row parser that respects quoted fields.
@@ -134,8 +133,40 @@ function formatPrice(value: string) {
   return `R$ ${num.toFixed(2).replace(".", ",")}`;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-export default function CataloguePage() {
+const mapCategoryToCsvType = (category: string, availableTypes: string[]): string => {
+  const cat = category.toLowerCase();
+  if (cat === "chapeus") {
+    return availableTypes.find(t => {
+      const tl = t.toLowerCase();
+      return tl.includes("chapéu") || tl.includes("chapeu");
+    }) || "Todos";
+  }
+  if (cat === "botas") {
+    return availableTypes.find(t => {
+      const tl = t.toLowerCase();
+      return tl.includes("bota") || tl.includes("pantufa");
+    }) || "Todos";
+  }
+  if (cat === "cintos") {
+    return availableTypes.find(t => {
+      const tl = t.toLowerCase();
+      return tl.includes("cinto");
+    }) || "Todos";
+  }
+  if (cat === "camisas-denim") {
+    return availableTypes.find(t => {
+      const tl = t.toLowerCase();
+      return tl.includes("camisa") || tl.includes("denim") || tl.includes("jaqueta");
+    }) || "Todos";
+  }
+  return "Todos";
+};
+
+// ─── Content Component ────────────────────────────────────────────────────────
+function CatalogueContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filtered, setFiltered] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -165,6 +196,15 @@ export default function CataloguePage() {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  // Set initial active filter from search query parameters when products are loaded
+  useEffect(() => {
+    if (products.length > 0 && categoryParam) {
+      const availableTypes = Array.from(new Set(products.map((p) => p.type).filter(Boolean)));
+      const mappedType = mapCategoryToCsvType(categoryParam, availableTypes);
+      setActiveType(mappedType);
+    }
+  }, [products, categoryParam]);
 
   // Types for filter tabs
   const types = ["Todos", ...Array.from(new Set(products.map((p) => p.type).filter(Boolean)))];
@@ -282,6 +322,23 @@ export default function CataloguePage() {
 
       <Footer />
     </div>
+  );
+}
+
+// ─── Export Component with Suspense ───────────────────────────────────────────
+export default function CataloguePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col min-h-screen bg-[#F8F5F0]">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center py-32">
+          <div className="w-12 h-12 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin" />
+        </div>
+        <Footer />
+      </div>
+    }>
+      <CatalogueContent />
+    </Suspense>
   );
 }
 

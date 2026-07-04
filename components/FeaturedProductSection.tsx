@@ -1,9 +1,46 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, ShoppingBag, Check, ShieldCheck, Flame, Compass } from "lucide-react";
+import { Star, ShoppingBag, Check, ShieldCheck, Flame, Compass, ChevronDown, ChevronUp, Upload, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/lib/cartStore";
+
+interface AccordionItemProps {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+function AccordionItem({ title, isOpen, onToggle, children }: AccordionItemProps) {
+  return (
+    <div className="border-b border-[#E8E0D5]">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full py-4 flex justify-between items-center text-left text-sm font-semibold uppercase tracking-wider text-[#2C1A0E] hover:text-[#D4AF37] transition-colors cursor-pointer"
+      >
+        <span>{title}</span>
+        {isOpen ? <ChevronUp className="w-4 h-4 text-[#D4AF37]" /> : <ChevronDown className="w-4 h-4 text-[#A89070]" />}
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="pb-4 text-sm text-[#6B4C2A] leading-relaxed font-light whitespace-pre-line">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 interface Variant {
   model: string;
@@ -54,6 +91,55 @@ export default function FeaturedProductSection() {
   const [engravingText, setEngravingText] = useState("");
   const [added, setAdded] = useState(false);
   const [activeImage, setActiveImage] = useState("");
+  
+  // Image Upload and Accordion States
+  const [uploading, setUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [openAccordion, setOpenAccordion] = useState<string | null>("desc");
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5MB.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const { createClient } = await import("@/utils/supabase/client");
+      const supabase = createClient();
+      
+      const bucket = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || "CSV File";
+      const fileExt = file.name.split('.').pop();
+      const fileName = `uploads/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+      setUploadedImageUrl(publicUrl);
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      alert("Erro ao enviar imagem: " + (err.message || err));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setUploadedImageUrl("");
+  };
 
   // Update active image when model/color selections change
   useEffect(() => {
@@ -72,6 +158,9 @@ export default function FeaturedProductSection() {
     };
     if (engravingText.trim()) {
       options["Texto para gravação"] = engravingText.trim();
+    }
+    if (uploadedImageUrl) {
+      options["Imagem Personalizada"] = uploadedImageUrl;
     }
 
     addItem({
@@ -103,7 +192,7 @@ export default function FeaturedProductSection() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain object-top p-4"
                 />
               </AnimatePresence>
 
@@ -136,7 +225,7 @@ export default function FeaturedProductSection() {
                       : "border-transparent opacity-50 hover:opacity-100"
                   }`}
                 >
-                  <img src={v.image} alt={v.model} className="w-full h-full object-cover" />
+                  <img src={v.image} alt={v.model} className="w-full h-full object-contain p-1" />
                 </button>
               ))}
             </div>
@@ -249,6 +338,60 @@ export default function FeaturedProductSection() {
                   Máximo 30 caracteres. Sem custo adicional.
                 </span>
               </div>
+
+              {/* Option 4: Custom Image Upload */}
+              <div className="pt-4 border-t border-[#E8E0D5]/60">
+                <span className="text-xs uppercase tracking-widest text-[#6B4C2A] font-semibold block mb-2">
+                  Envie sua Foto ou Logomarca (Opcional):
+                </span>
+                
+                {uploadedImageUrl ? (
+                  <div className="flex items-center gap-3 p-3 bg-[#F8F5F0] border border-[#D4AF37]/40 rounded-sm">
+                    <img src={uploadedImageUrl} alt="Preview" className="w-12 h-12 object-cover rounded-sm border border-[#E8E0D5]" />
+                    <div className="flex-grow min-w-0">
+                      <p className="text-xs font-semibold text-[#2C1A0E] truncate">Imagem enviada com sucesso!</p>
+                      <button 
+                        type="button" 
+                        onClick={handleRemoveImage}
+                        className="text-[10px] text-red-500 hover:underline mt-0.5"
+                      >
+                        Remover imagem
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                      id="custom-image-upload"
+                    />
+                    <label
+                      htmlFor="custom-image-upload"
+                      className={`flex flex-col items-center justify-center border-2 border-dashed border-[#C8B99A] hover:border-[#D4AF37] rounded-sm p-5 cursor-pointer bg-white transition-all text-center ${
+                        uploading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {uploading ? (
+                        <>
+                          <div className="w-5 h-5 rounded-full border-2 border-[#D4AF37] border-t-transparent animate-spin mb-2" />
+                          <span className="text-xs text-[#A89070]">Enviando imagem...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-6 h-6 text-[#A89070] mb-2" />
+                          <span className="text-xs font-semibold text-[#6B4C2A]">Clique para enviar sua imagem</span>
+                          <span className="text-[10px] text-[#A89070] mt-1">PNG, JPG de até 5MB</span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                )}
+              </div>
+
             </div>
 
             {/* Add to Cart Actions */}
@@ -279,6 +422,56 @@ export default function FeaturedProductSection() {
                 <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
                 <span>Garantia de Satisfação Parada de Ouro</span>
               </div>
+            </div>
+
+            {/* Shopify-style Accordion */}
+            <div className="mt-8 border-t border-[#E8E0D5] pt-2">
+              <AccordionItem
+                title="Descrição Geral"
+                isOpen={openAccordion === "desc"}
+                onToggle={() => setOpenAccordion(openAccordion === "desc" ? null : "desc")}
+              >
+                Caneca térmica rústica premium em aço inox. Ideal para manter sua bebida trincando, seu tereré gelado ou seu café quente até o último gole. Acompanha tampa hermética com abridor de garrafas integrado e personalização gratuita a laser de nome e time.
+              </AccordionItem>
+              
+              <AccordionItem
+                title="Especificações Técnicas"
+                isOpen={openAccordion === "specs"}
+                onToggle={() => setOpenAccordion(openAccordion === "specs" ? null : "specs")}
+              >
+                <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs font-medium">
+                  <span className="text-[#A89070]">Capacidade</span>
+                  <span className="text-[#2C1A0E] text-right">500 ml</span>
+                  <span className="text-[#A89070] border-t border-[#E8E0D5]/50 pt-2">Material</span>
+                  <span className="text-[#2C1A0E] text-right border-t border-[#E8E0D5]/50 pt-2">Aço Inoxidável 304 (Double Wall)</span>
+                  <span className="text-[#A89070] border-t border-[#E8E0D5]/50 pt-2">Isolamento Térmico</span>
+                  <span className="text-[#2C1A0E] text-right border-t border-[#E8E0D5]/50 pt-2">Parede dupla a vácuo (18h gelado, 8h quente)</span>
+                  <span className="text-[#A89070] border-t border-[#E8E0D5]/50 pt-2">Gravação</span>
+                  <span className="text-[#2C1A0E] text-right border-t border-[#E8E0D5]/50 pt-2">Laser de fibra de alta precisão (permanente)</span>
+                  <span className="text-[#A89070] border-t border-[#E8E0D5]/50 pt-2">Extra</span>
+                  <span className="text-[#2C1A0E] text-right border-t border-[#E8E0D5]/50 pt-2">Tampa com abridor de garrafas integrado</span>
+                </div>
+              </AccordionItem>
+
+              <AccordionItem
+                title="Envio & Prazos"
+                isOpen={openAccordion === "shipping"}
+                onToggle={() => setOpenAccordion(openAccordion === "shipping" ? null : "shipping")}
+              >
+                • Produção: 1 a 3 dias úteis para personalização após confirmação dos dados.
+                • Envio Seguro: Frete com código de rastreamento enviado por e-mail/WhatsApp para todo o Brasil.
+                • Garantia de Carga: Seguro completo contra extravios ou danos no transporte.
+              </AccordionItem>
+
+              <AccordionItem
+                title="Instruções de Cuidado"
+                isOpen={openAccordion === "care"}
+                onToggle={() => setOpenAccordion(openAccordion === "care" ? null : "care")}
+              >
+                • Lavar com sabão neutro e esponja macia.
+                • Não utilizar esponjas de aço ou abrasivos que possam riscar o revestimento.
+                • Não levar ao micro-ondas ou lava-louças para preservar a integridade da gravação.
+              </AccordionItem>
             </div>
 
           </div>

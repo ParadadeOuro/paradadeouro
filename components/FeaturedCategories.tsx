@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const categories = [
   {
@@ -9,8 +10,8 @@ const categories = [
     title: "Chapéus Premium",
     subtitle: "A assinatura do estilo western",
     description: "Confeccionados com feltro nobre e pelos selecionados, inspirados na herança dos grandes campos.",
-    image: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&q=80&w=800",
-    link: "#chapeus",
+    image: "/images/categories/chapeus.png",
+    link: "/catalogue?category=chapeus",
     gridArea: "md:col-span-2 md:row-span-1",
   },
   {
@@ -18,8 +19,8 @@ const categories = [
     title: "Botas de Couro",
     subtitle: "Durabilidade e maestria",
     description: "Construção legítima Goodyear Welt, com couro curtido artesanalmente para conforto incomparável.",
-    image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&q=80&w=800",
-    link: "#botas",
+    image: "/images/categories/botas.png",
+    link: "/catalogue?category=botas",
     gridArea: "md:col-span-1 md:row-span-2",
   },
   {
@@ -27,17 +28,17 @@ const categories = [
     title: "Cintos & Acessórios",
     subtitle: "Detalhes em ouro e metal",
     description: "Fivelas robustas e couro trabalhado à mão com acabamento premium.",
-    image: "https://images.unsplash.com/photo-1624224971170-2f84fed5eb5e?auto=format&fit=crop&q=80&w=800",
-    link: "#cintos",
+    image: "/images/categories/cintos.png",
+    link: "/catalogue?category=cintos",
     gridArea: "md:col-span-1 md:row-span-1",
   },
   {
-    id: "denim",
+    id: "camisas-denim",
     title: "Coleção Denim",
     subtitle: "O dia a dia do agro moderno",
     description: "Modelagem impecável e costuras reforçadas para quem exige elegância e resistência.",
-    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=800",
-    link: "#denim",
+    image: "/images/categories/denim.png",
+    link: "/catalogue?category=camisas-denim",
     gridArea: "md:col-span-2 md:row-span-1",
   },
 ];
@@ -67,42 +68,47 @@ export default function FeaturedCategories() {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[320px]">
           {categories.map((category, index) => (
-            <motion.div
+            <Link
               key={category.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`relative overflow-hidden group rounded-sm shadow-sm ${category.gridArea}`}
+              href={category.link}
+              className={`block relative overflow-hidden group rounded-sm shadow-sm ${category.gridArea}`}
             >
-              {/* Card Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{ backgroundImage: `url('${category.image}')` }}
-              />
-              {/* Overlay Gradients */}
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-brown/95 via-brand-brown/40 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
-              
-              {/* Card Content */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end text-brand-offwhite">
-                <span className="text-xs font-semibold tracking-wider text-brand-gold uppercase mb-1">
-                  {category.subtitle}
-                </span>
-                <h3 className="font-display text-2xl lg:text-3xl font-bold tracking-tight mb-2">
-                  {category.title}
-                </h3>
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="w-full h-full relative"
+              >
+                {/* Card Image */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                  style={{ backgroundImage: `url('${category.image}')` }}
+                />
+                {/* Overlay Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-brown/95 via-brand-brown/40 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
                 
-                {/* Expandable description on Hover (desktop) */}
-                <p className="text-xs text-brand-offwhite/70 font-light leading-relaxed max-h-0 opacity-0 overflow-hidden group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 ease-in-out mb-4">
-                  {category.description}
-                </p>
+                {/* Card Content */}
+                <div className="absolute inset-0 p-8 flex flex-col justify-end text-brand-offwhite">
+                  <span className="text-xs font-semibold tracking-wider text-brand-gold uppercase mb-1">
+                    {category.subtitle}
+                  </span>
+                  <h3 className="font-display text-2xl lg:text-3xl font-bold tracking-tight mb-2">
+                    {category.title}
+                  </h3>
+                  
+                  {/* Expandable description on Hover (desktop) */}
+                  <p className="text-xs text-brand-offwhite/70 font-light leading-relaxed max-h-0 opacity-0 overflow-hidden group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 ease-in-out mb-4">
+                    {category.description}
+                  </p>
 
-                <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-brand-gold group-hover:text-brand-offwhite transition-colors duration-300">
-                  Explorar
-                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                  <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-brand-gold group-hover:text-brand-offwhite transition-colors duration-300">
+                    Explorar
+                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>
