@@ -1,14 +1,106 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cartStore";
-import { ChevronLeft, ShoppingBag, Check, Star } from "lucide-react";
+import { ChevronLeft, ShoppingBag, Check, Star, ChevronDown, ChevronUp, Upload } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { buildCsvUrl } from "@/lib/catalogueParser";
+
+interface AccordionItemProps {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+function AccordionItem({ title, isOpen, onToggle, children }: AccordionItemProps) {
+  return (
+    <div className="border-b border-[#E8E0D5]">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full py-4 flex justify-between items-center text-left text-sm font-semibold uppercase tracking-wider text-[#2C1A0E] hover:text-[#D4AF37] transition-colors cursor-pointer"
+      >
+        <span>{title}</span>
+        {isOpen ? <ChevronUp className="w-4 h-4 text-[#D4AF37]" /> : <ChevronDown className="w-4 h-4 text-[#A89070]" />}
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="pb-4 text-sm text-[#6B4C2A] leading-relaxed font-light whitespace-pre-line">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+const getSpecsByProduct = (handle: string, type: string, title: string) => {
+  const h = handle.toLowerCase();
+  const t = type.toLowerCase();
+  const tl = title.toLowerCase();
+  
+  if (h.includes("caneca") || tl.includes("caneca")) {
+    return [
+      { label: "Material", value: "Aço Inoxidável 18/8 (Livre de BPA)" },
+      { label: "Isolamento Térmico", value: "Parede dupla com isolamento a vácuo (Gelado por 18h, Quente por 8h)" },
+      { label: "Capacidade", value: "500 ml" },
+      { label: "Gravação", value: "Laser de alta definição (permanente, não desbota)" },
+      { label: "Tampa", value: "Antivazamento com abridor de garrafas integrado" }
+    ];
+  }
+  
+  if (h.includes("bota") || h.includes("botina") || t.includes("botas") || tl.includes("bota") || tl.includes("botina")) {
+    return [
+      { label: "Cabedal", value: "Couro Legítimo Nobre (Látego ou Nobuck selecionado)" },
+      { label: "Forração", value: "Couro macio antitranspirante" },
+      { label: "Palmilha", value: "Palmilha Ortopédica em Gel PU de alta densidade (Conforto Extremo)" },
+      { label: "Solado", value: "Borracha antiderrapante costurada (Vira Francesa ou Goodyear Welt)" },
+      { label: "Acabamento", value: "Costuras reforçadas feitas à mão" }
+    ];
+  }
+  
+  if (h.includes("cinto") || t.includes("cintos") || tl.includes("cinto")) {
+    return [
+      { label: "Tira", value: "Couro Bovino Legítimo Soleta de alta espessura" },
+      { label: "Fivela", value: "Zamac maciço com banho de ouro e prata com verniz de proteção" },
+      { label: "Largura da Tira", value: "40 mm (padrão western)" },
+      { label: "Ajuste", value: "5 furos de regulagem" },
+      { label: "Detalhes", value: "Trabalho entalhado à mão no couro" }
+    ];
+  }
+  
+  return [
+    { label: "Qualidade", value: "Matéria-prima premium selecionada" },
+    { label: "Produção", value: "Artesanal com rigoroso controle de qualidade" },
+    { label: "Origem", value: "Fabricado no Brasil" }
+  ];
+};
+
+const getCareAndWarranty = (handle: string, title: string) => {
+  const h = handle.toLowerCase();
+  const tl = title.toLowerCase();
+  
+  if (h.includes("caneca") || tl.includes("caneca")) {
+    return "Lave com sabão neutro e esponja macia. Não utilize esponjas de aço ou abrasivos que possam riscar o revestimento. Não levar ao micro-ondas nem à lava-louças. Garantia de 3 meses contra perda de vácuo térmico e defeitos de fabricação.";
+  }
+  if (h.includes("bota") || h.includes("botina") || tl.includes("bota") || tl.includes("botina")) {
+    return "Limpar com pano levemente úmido e sabão neutro. Deixar secar à sombra em local ventilado (nunca expor ao sol direto ou fontes de calor). Hidratar o couro periodicamente com pomadas específicas ou vaselina líquida. Garantia de 3 meses contra defeitos de fabricação e descolamento do solado.";
+  }
+  return "Evite contato com água em abundância e produtos químicos. Para artigos de couro, hidrate anualmente com creme específico. Armazene em local seco e arejado. Garantia de 3 meses contra defeitos de fabricação.";
+};
 
 
 
@@ -208,6 +300,55 @@ export default function ProductPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [added, setAdded] = useState(false);
 
+  // Image Upload and Accordion States
+  const [uploading, setUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [openAccordion, setOpenAccordion] = useState<string | null>("desc");
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5MB.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const { createClient } = await import("@/utils/supabase/client");
+      const supabase = createClient();
+      
+      const bucket = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || "CSV File";
+      const fileExt = file.name.split('.').pop();
+      const fileName = `uploads/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+      setUploadedImageUrl(publicUrl);
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      alert("Erro ao enviar imagem: " + (err.message || err));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setUploadedImageUrl("");
+  };
+
   const fetchProduct = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -260,11 +401,17 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     if (!product || !matchedVariant) return;
+    
+    const cartOptions = { ...selectedOptions };
+    if (uploadedImageUrl) {
+      cartOptions["Imagem Personalizada"] = uploadedImageUrl;
+    }
+
     addItem({
       handle: product.handle,
       title: product.title,
       image: product.images[0] || "",
-      selectedOptions,
+      selectedOptions: cartOptions,
       price: matchedVariant.price,
     });
     setAdded(true);
@@ -446,6 +593,61 @@ export default function ProductPage() {
               );
             })}
 
+            {/* Custom Image Upload for Mugs */}
+            {product.handle.includes("caneca") && (
+              <div className="pt-2 border-t border-[#E8E0D5]/60 mb-4">
+                <span className="text-xs uppercase tracking-widest text-[#6B4C2A] font-semibold block mb-2">
+                  Envie sua Foto ou Logomarca (Opcional):
+                </span>
+                
+                {uploadedImageUrl ? (
+                  <div className="flex items-center gap-3 p-3 bg-white border border-[#D4AF37]/40 rounded-sm">
+                    <img src={uploadedImageUrl} alt="Preview" className="w-12 h-12 object-cover rounded-sm border border-[#E8E0D5]" />
+                    <div className="flex-grow min-w-0">
+                      <p className="text-xs font-semibold text-[#2C1A0E] truncate">Imagem enviada com sucesso!</p>
+                      <button 
+                        type="button" 
+                        onClick={handleRemoveImage}
+                        className="text-[10px] text-red-500 hover:underline mt-0.5"
+                      >
+                        Remover imagem
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                      id="product-image-upload"
+                    />
+                    <label
+                      htmlFor="product-image-upload"
+                      className={`flex flex-col items-center justify-center border-2 border-dashed border-[#C8B99A] hover:border-[#D4AF37] rounded-sm p-4 cursor-pointer bg-white transition-all text-center ${
+                        uploading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {uploading ? (
+                        <>
+                          <div className="w-4 h-4 rounded-full border-2 border-[#D4AF37] border-t-transparent animate-spin mb-1.5" />
+                          <span className="text-xs text-[#A89070]">Enviando imagem...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-5 h-5 text-[#A89070] mb-1.5" />
+                          <span className="text-xs font-semibold text-[#6B4C2A]">Clique para enviar sua imagem</span>
+                          <span className="text-[10px] text-[#A89070] mt-0.5">PNG, JPG de até 5MB</span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Add to cart */}
             <div className="flex flex-col gap-3 pt-2">
               <motion.button
@@ -505,24 +707,72 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* ── Description ─────────────────────────────────────────────────── */}
-        {product.bodyHtml && (
-          <div className="bg-white border-t border-[#E8E0D5]">
-            <div className="max-w-4xl mx-auto px-6 py-14">
-              <h2
-                className="font-display text-2xl font-bold text-[#2C1A0E] mb-6 tracking-wide"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Sobre o Produto
-              </h2>
-              <div className="prose prose-sm max-w-none text-[#4A3728] leading-relaxed">
-                <p className="whitespace-pre-line text-sm leading-7">
+        {/* ── Description (Shopify-Style Accordions) ─────────────────────── */}
+        <div className="bg-white border-t border-[#E8E0D5]">
+          <div className="max-w-4xl mx-auto px-6 py-14">
+            <h2
+              className="font-display text-2xl font-bold text-[#2C1A0E] mb-6 tracking-wide"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Detalhes do Produto
+            </h2>
+            
+            <div className="mt-4 border-t border-[#E8E0D5]">
+              {product.bodyHtml && (
+                <AccordionItem
+                  title="Sobre o Produto"
+                  isOpen={openAccordion === "desc"}
+                  onToggle={() => setOpenAccordion(openAccordion === "desc" ? null : "desc")}
+                >
                   {stripHtml(product.bodyHtml)}
-                </p>
-              </div>
+                </AccordionItem>
+              )}
+              
+              <AccordionItem
+                title="Especificações Técnicas"
+                isOpen={openAccordion === "specs"}
+                onToggle={() => setOpenAccordion(openAccordion === "specs" ? null : "specs")}
+              >
+                <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs font-medium max-w-lg">
+                  {getSpecsByProduct(product.handle, product.type, product.title).map((spec, i) => (
+                    <React.Fragment key={i}>
+                      <span className="text-[#A89070] border-t border-[#E8E0D5]/50 pt-2 first:border-0 first:pt-0">{spec.label}</span>
+                      <span className="text-[#2C1A0E] text-right border-t border-[#E8E0D5]/50 pt-2 first:border-0 first:pt-0">{spec.value}</span>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </AccordionItem>
+
+              <AccordionItem
+                title="Envio & Prazos"
+                isOpen={openAccordion === "shipping"}
+                onToggle={() => setOpenAccordion(openAccordion === "shipping" ? null : "shipping")}
+              >
+                {product.handle.includes("caneca") ? (
+                  <>
+                    • Produção: 1 a 3 dias úteis para personalização após confirmação dos dados.<br />
+                    • Envio Seguro: Frete com código de rastreamento enviado por e-mail/WhatsApp para todo o Brasil.<br />
+                    • Garantia de Carga: Seguro completo contra extravios ou danos no transporte.
+                  </>
+                ) : (
+                  <>
+                    • Envio Rápido: Despacho em até 24h úteis após aprovação do pagamento.<br />
+                    • Código de Rastreamento: Enviado automaticamente por e-mail/WhatsApp.<br />
+                    • Frete Seguro: Parceria com as melhores transportadoras e Correios com seguro total.
+                  </>
+                )}
+              </AccordionItem>
+
+              <AccordionItem
+                title="Instruções de Cuidado & Garantia"
+                isOpen={openAccordion === "care"}
+                onToggle={() => setOpenAccordion(openAccordion === "care" ? null : "care")}
+              >
+                {getCareAndWarranty(product.handle, product.title)}
+              </AccordionItem>
             </div>
           </div>
-        )}
+        </div>
       </main>
 
       <Footer />
