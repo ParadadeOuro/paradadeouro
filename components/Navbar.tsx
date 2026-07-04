@@ -13,6 +13,10 @@ const categories = [
   { name: "Botas", id: "botas" },
   { name: "Cintos", id: "cintos" },
   { name: "Camisas & Denim", id: "camisas-denim" },
+  { name: "Bonés", id: "bones" },
+  { name: "Fivelas", id: "fivelas" },
+  { name: "Cutelaria", id: "churrasco" },
+  { name: "Canecas", id: "canecas" },
 ];
 
 export default function Navbar() {

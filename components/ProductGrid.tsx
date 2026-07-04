@@ -11,6 +11,10 @@ const tabs = [
   { id: "botas", name: "Botas" },
   { id: "cintos", name: "Cintos" },
   { id: "camisas-denim", name: "Camisas & Denim" },
+  { id: "bones", name: "Bonés" },
+  { id: "fivelas", name: "Fivelas" },
+  { id: "churrasco", name: "Cutelaria" },
+  { id: "canecas", name: "Canecas" },
 ];
 
 const fallbackProducts: Record<string, Partial<CatalogueProduct>[]> = {
@@ -60,14 +64,16 @@ const fallbackProducts: Record<string, Partial<CatalogueProduct>[]> = {
   ]
 };
 
-const mapProductToCategory = (type: string, tags: string = ""): string | null => {
+const mapProductToCategory = (type: string, tags: string = "", title: string = "", handle: string = ""): string | null => {
   const t = type.toLowerCase();
   const tagList = tags.toLowerCase().split(",").map(x => x.trim());
+  const tl = title.toLowerCase();
+  const h = handle.toLowerCase();
   
   if (t.includes("chapéu") || t.includes("chapeu") || tagList.includes("chapéu") || tagList.includes("chapeu")) {
     return "chapeus";
   }
-  if (t.includes("bota") || t.includes("pantufa") || tagList.includes("bota") || tagList.includes("pantufa")) {
+  if (t.includes("bota") || t.includes("pantufa") || t.includes("botina") || tagList.includes("bota") || tagList.includes("pantufa") || tagList.includes("botina")) {
     return "botas";
   }
   if (t.includes("cinto") || tagList.includes("cinto")) {
@@ -75,6 +81,18 @@ const mapProductToCategory = (type: string, tags: string = ""): string | null =>
   }
   if (t.includes("camisa") || t.includes("denim") || t.includes("jaqueta") || tagList.includes("camisa") || tagList.includes("denim") || tagList.includes("jaqueta")) {
     return "camisas-denim";
+  }
+  if (tagList.includes("bone") || tagList.includes("bones") || tagList.includes("boné") || t.includes("boné") || tl.includes("boné")) {
+    return "bones";
+  }
+  if (tagList.includes("fivela") || t.includes("fivela") || tl.includes("fivela")) {
+    return "fivelas";
+  }
+  if (t.includes("kit churrasco") || tagList.includes("kit churrasco") || tagList.includes("cutelaria") || tl.includes("faca")) {
+    return "churrasco";
+  }
+  if (tl.includes("caneca") || h.includes("caneca")) {
+    return "canecas";
   }
   return null;
 };
@@ -86,6 +104,10 @@ export default function ProductGrid() {
     botas: [],
     cintos: [],
     "camisas-denim": [],
+    bones: [],
+    fivelas: [],
+    churrasco: [],
+    canecas: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -106,10 +128,14 @@ export default function ProductGrid() {
         botas: [],
         cintos: [],
         "camisas-denim": [],
+        bones: [],
+        fivelas: [],
+        churrasco: [],
+        canecas: [],
       };
       
       data.forEach((p) => {
-        const cat = mapProductToCategory(p.type, p.tags);
+        const cat = mapProductToCategory(p.type, p.tags, p.title, p.handle);
         if (cat && grouped[cat]) {
           grouped[cat].push(p);
         }

@@ -113,7 +113,7 @@ function parseCsv(text: string): Product[] {
       productMap.set(handle, {
         handle,
         title: title || handle,
-        type: cols[iType]?.trim() || "",
+        type: inferProductType(cols[iType]?.trim() || "", cols[iTags]?.trim() || "", title || "", handle),
         vendor: cols[iVendor]?.trim() || "",
         tags: cols[iTags]?.trim() || "",
         price: price || "",
@@ -127,6 +127,24 @@ function parseCsv(text: string): Product[] {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+function inferProductType(type: string, tags: string, title: string, handle: string): string {
+  const t = type.toLowerCase();
+  const tagList = tags.toLowerCase().split(",").map(x => x.trim());
+  const tl = title.toLowerCase();
+  const h = handle.toLowerCase();
+  
+  if (t.includes("chapéu") || t.includes("chapeu") || tagList.includes("chapéu") || tagList.includes("chapeu")) return "Chapéus";
+  if (t.includes("bota") || t.includes("pantufa") || t.includes("botina") || tagList.includes("bota") || tagList.includes("pantufa") || tagList.includes("botina")) return "Botas";
+  if (t.includes("cinto") || tagList.includes("cinto")) return "Cintos";
+  if (t.includes("camisa") || t.includes("denim") || t.includes("jaqueta") || tagList.includes("camisa") || tagList.includes("denim") || tagList.includes("jaqueta")) return "Camisas & Denim";
+  if (tagList.includes("bone") || tagList.includes("bones") || tagList.includes("boné") || t.includes("boné") || tl.includes("boné")) return "Bonés";
+  if (tagList.includes("fivela") || t.includes("fivela") || tl.includes("fivela")) return "Fivelas";
+  if (t.includes("kit churrasco") || tagList.includes("kit churrasco") || tagList.includes("cutelaria") || tl.includes("faca")) return "Cutelaria";
+  if (tl.includes("caneca") || h.includes("caneca")) return "Canecas";
+  
+  return type || "Outros"; // fallback
+}
+
 function formatPrice(value: string) {
   const num = parseFloat(value.replace(",", "."));
   if (isNaN(num)) return value;
@@ -134,32 +152,19 @@ function formatPrice(value: string) {
 }
 
 const mapCategoryToCsvType = (category: string, availableTypes: string[]): string => {
-  const cat = category.toLowerCase();
-  if (cat === "chapeus") {
-    return availableTypes.find(t => {
-      const tl = t.toLowerCase();
-      return tl.includes("chapéu") || tl.includes("chapeu");
-    }) || "Todos";
-  }
-  if (cat === "botas") {
-    return availableTypes.find(t => {
-      const tl = t.toLowerCase();
-      return tl.includes("bota") || tl.includes("pantufa");
-    }) || "Todos";
-  }
-  if (cat === "cintos") {
-    return availableTypes.find(t => {
-      const tl = t.toLowerCase();
-      return tl.includes("cinto");
-    }) || "Todos";
-  }
-  if (cat === "camisas-denim") {
-    return availableTypes.find(t => {
-      const tl = t.toLowerCase();
-      return tl.includes("camisa") || tl.includes("denim") || tl.includes("jaqueta");
-    }) || "Todos";
-  }
-  return "Todos";
+  const mapping: Record<string, string> = {
+    "chapeus": "Chapéus",
+    "botas": "Botas",
+    "cintos": "Cintos",
+    "camisas-denim": "Camisas & Denim",
+    "bones": "Bonés",
+    "fivelas": "Fivelas",
+    "churrasco": "Cutelaria",
+    "canecas": "Canecas"
+  };
+  
+  const mapped = mapping[category.toLowerCase()];
+  return availableTypes.includes(mapped) ? mapped : "Todos";
 };
 
 // ─── Content Component ────────────────────────────────────────────────────────
