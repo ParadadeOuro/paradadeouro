@@ -445,9 +445,9 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <p className="text-lg text-gray-500 mb-4">Seu carrinho está vazio</p>
-        <Link href="/" className="text-yellow-600 underline">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-brand-offwhite p-4">
+        <p className="text-lg text-brand-charcoal/60 mb-4 font-sans font-light">Seu carrinho está vazio</p>
+        <Link href="/" className="text-brand-gold hover:text-brand-tan underline uppercase tracking-wider text-xs font-bold transition-colors">
           Voltar à loja
         </Link>
       </div>
@@ -455,92 +455,98 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-brand-offwhite text-brand-charcoal flex flex-col font-sans animate-in fade-in duration-500">
       <Toaster richColors position="top-right" />
 
       {/* Header */}
-      <header className="bg-white border-b py-4">
+      <header className="bg-brand-brown text-brand-offwhite border-b border-brand-tan/10 py-4 shadow-md">
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <Link href="/">
+          <Link href="/" className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/pagamento-seguro.png"
+              src="/logo.jpg"
               alt="Parada de Ouro"
-              className="h-[17px] cursor-pointer"
+              className="h-10 sm:h-12 w-auto object-contain cursor-pointer transition-transform hover:scale-105 duration-300"
             />
           </Link>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/pagamento-seguro.png" alt="Pagamento 100% Seguro" className="h-7" />
+          <img 
+            src="/pagamento-seguro.png" 
+            alt="Pagamento 100% Seguro" 
+            className="h-7 opacity-90 filter brightness-110" 
+          />
         </div>
       </header>
 
       {/* Promo banner */}
-      <div className="bg-black text-white py-2.5 text-xs sm:text-sm font-semibold">
+      <div className="bg-[#1a0f08] border-b border-brand-gold/10 text-brand-offwhite/90 py-2.5 text-xs sm:text-sm font-semibold">
         <div className="container mx-auto px-4 flex items-center justify-center gap-3">
           <span className="flex items-center gap-1.5">
             <span aria-hidden style={{ filter: 'hue-rotate(90deg) saturate(2)' }}>🔥</span>
             <span>
               Oferta expira em{' '}
-              <span className="text-[#67f104] font-bold tabular-nums">
+              <span className="text-brand-gold font-bold tabular-nums">
                 {mm}:{ss}
               </span>
             </span>
           </span>
-          <span className="text-gray-500">•</span>
+          <span className="text-brand-gold/20">•</span>
           <span className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5" />
+            <Lock className="w-3.5 h-3.5 text-brand-gold" />
             <span>Checkout 100% seguro</span>
           </span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-6 flex-1">
+      <div className="container mx-auto px-4 py-8 flex-1">
         <div className="flex flex-col lg:flex-row gap-6 max-w-5xl mx-auto">
           {/* Left: Steps */}
           <div className="flex-1 space-y-4 order-2 lg:order-1">
             {/* Step 1: Identificação */}
-            <div className={`bg-white rounded-lg border p-5 ${currentStep !== 1 ? 'opacity-60' : ''}`}>
+            <div className={`bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm transition-opacity duration-300 ${currentStep !== 1 ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      stepNum >= 1 ? 'text-white bg-[#67f104]' : 'bg-gray-200 text-gray-500'
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold tracking-tighter ${
+                      stepNum >= 1 
+                        ? 'text-brand-brown bg-brand-gold' 
+                        : 'bg-brand-offwhite border border-brand-tan/20 text-brand-charcoal/40'
                     }`}
                   >
                     1
                   </span>
-                  <h2 className="font-bold text-base uppercase tracking-wide">Identificação</h2>
+                  <h2 className="font-bold text-base uppercase tracking-wider text-brand-brown">Identificação</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">1 DE 3</span>
+                  <span className="text-xs text-brand-charcoal/40 tracking-wider font-semibold">1 DE 3</span>
                   {currentStep !== 1 && (
                     <button
                       onClick={() => setCurrentStep(1)}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="text-brand-tan hover:text-brand-brown transition-colors cursor-pointer"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                   )}
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mb-4 ml-8">
+              <p className="text-xs text-brand-charcoal/60 mb-6 ml-8 font-light">
                 Preencha seus dados para envio do pedido.
               </p>
 
               {currentStep === 1 && (
-                <div className="space-y-4">
+                <div className="space-y-4 ml-0 sm:ml-8 animate-in fade-in duration-300">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Nome completo</label>
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">Nome completo</label>
                     <input
                       value={form.name}
                       onChange={(e) => updateField('name', e.target.value)}
                       placeholder="Digite seu nome completo"
-                      className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">E-mail</label>
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">E-mail</label>
                     <input
                       type="email"
                       value={form.email}
@@ -548,29 +554,33 @@ export default function CheckoutPage() {
                         updateField('email', e.target.value.trim().toLowerCase())
                       }
                       placeholder="Digite seu e-mail"
-                      className={`w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 ${
-                        emailError ? 'border-red-500 focus:ring-red-500' : 'focus:ring-yellow-500'
+                      className={`w-full border rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 bg-brand-offwhite/5 transition-all ${
+                        emailError 
+                          ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                          : 'border-brand-tan/20 focus:ring-brand-gold focus:border-brand-gold'
                       }`}
                     />
                     {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">CPF</label>
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">CPF</label>
                     <input
                       value={form.cpf}
                       onChange={(e) => updateField('cpf', formatCpf(e.target.value))}
                       placeholder="000.000.000-00"
                       maxLength={14}
-                      className={`w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 max-w-[220px] ${
-                        cpfError ? 'border-red-500 focus:ring-red-500' : 'focus:ring-yellow-500'
+                      className={`w-full border rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 bg-brand-offwhite/5 max-w-[220px] transition-all ${
+                        cpfError 
+                          ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                          : 'border-brand-tan/20 focus:ring-brand-gold focus:border-brand-gold'
                       }`}
                     />
                     {cpfError && <p className="text-xs text-red-500 mt-1">{cpfError}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Celular/Whatsapp</label>
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">Celular/Whatsapp</label>
                     <div className="flex items-center gap-2 max-w-[260px]">
-                      <span className="text-sm text-gray-500 border rounded-md px-3 py-2.5 bg-gray-50">
+                      <span className="text-sm text-brand-charcoal/60 border border-brand-tan/20 rounded-sm px-3 py-2.5 bg-brand-offwhite/20 select-none">
                         +55
                       </span>
                       <input
@@ -580,8 +590,10 @@ export default function CheckoutPage() {
                         onChange={(e) => updateField('phone', formatPhone(e.target.value))}
                         placeholder="(00) 00000-0000"
                         maxLength={15}
-                        className={`flex-1 border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 ${
-                          phoneError ? 'border-red-500 focus:ring-red-500' : 'focus:ring-yellow-500'
+                        className={`flex-1 border rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 bg-brand-offwhite/5 transition-all ${
+                          phoneError 
+                            ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                            : 'border-brand-tan/20 focus:ring-brand-gold focus:border-brand-gold'
                         }`}
                       />
                     </div>
@@ -591,7 +603,7 @@ export default function CheckoutPage() {
                   <button
                     onClick={() => canGoStep2 && setCurrentStep(2)}
                     disabled={!canGoStep2}
-                    className="w-full py-3.5 rounded-full text-white font-bold text-sm uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-black"
+                    className="w-full py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan disabled:bg-brand-tan/30 disabled:text-brand-brown/40 font-bold text-xs uppercase tracking-widest disabled:cursor-not-allowed transition-all duration-300 shadow-sm cursor-pointer mt-6"
                   >
                     Ir Para Entrega
                   </button>
@@ -600,38 +612,40 @@ export default function CheckoutPage() {
             </div>
 
             {/* Step 2: Entrega */}
-            <div className={`bg-white rounded-lg border p-5 ${currentStep !== 2 ? 'opacity-60' : ''}`}>
+            <div className={`bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm transition-opacity duration-300 ${currentStep !== 2 ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      stepNum >= 2 ? 'text-white bg-[#67f104]' : 'bg-gray-200 text-gray-500'
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold tracking-tighter ${
+                      stepNum >= 2 
+                        ? 'text-brand-brown bg-brand-gold' 
+                        : 'bg-brand-offwhite border border-brand-tan/20 text-brand-charcoal/40'
                     }`}
                   >
                     2
                   </span>
-                  <h2 className="font-bold text-base uppercase tracking-wide">Entrega</h2>
+                  <h2 className="font-bold text-base uppercase tracking-wider text-brand-brown">Entrega</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">2 DE 3</span>
+                  <span className="text-xs text-brand-charcoal/40 tracking-wider font-semibold">2 DE 3</span>
                   {currentStep !== 2 && stepNum > 2 && (
                     <button
                       onClick={() => setCurrentStep(2)}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="text-brand-tan hover:text-brand-brown transition-colors cursor-pointer"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                   )}
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mb-4 ml-8">
+              <p className="text-xs text-brand-charcoal/60 mb-6 ml-8 font-light">
                 Preencha seus dados para continuar
               </p>
 
               {currentStep === 2 && (
-                <div className="space-y-4">
+                <div className="space-y-4 ml-0 sm:ml-8 animate-in fade-in duration-300">
                   <div>
-                    <label className="block text-sm font-medium mb-1">CEP</label>
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">CEP</label>
                     <input
                       value={form.cep}
                       onChange={(e) => {
@@ -640,150 +654,152 @@ export default function CheckoutPage() {
                         if (clean.length === 8) fetchAddressByCep(e.target.value);
                       }}
                       placeholder="00000-000"
-                      className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 max-w-[200px]"
+                      className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 max-w-[200px] transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Endereço</label>
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">Endereço</label>
                     <input
                       value={form.address}
                       onChange={(e) => updateField('address', e.target.value)}
                       placeholder="Rua, Avenida..."
-                      className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">N°</label>
+                      <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">N°</label>
                       <input
                         value={form.number}
                         onChange={(e) => updateField('number', e.target.value)}
-                        className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Bairro</label>
+                      <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">Bairro</label>
                       <input
                         value={form.neighborhood}
                         onChange={(e) => updateField('neighborhood', e.target.value)}
-                        className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Cidade</label>
+                      <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">Cidade</label>
                       <input
                         value={form.city}
                         onChange={(e) => updateField('city', e.target.value)}
-                        className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Estado</label>
+                      <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">Estado</label>
                       <input
                         value={form.state}
                         onChange={(e) => updateField('state', e.target.value)}
                         maxLength={2}
-                        className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1.5">
                       Complemento (Opcional)
                     </label>
                     <input
                       value={form.complement}
                       onChange={(e) => updateField('complement', e.target.value)}
-                      className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                     />
                   </div>
 
                   {/* Frete */}
-                  <div className="space-y-2">
-                    <p className="text-sm font-bold mb-2">Escolha o frete:</p>
+                  <div className="space-y-3 pt-2">
+                    <p className="text-xs font-bold text-brand-brown uppercase tracking-wider mb-2">Escolha o frete:</p>
 
                     {/* PAC */}
                     <button
                       onClick={() => setShippingMethod('pac')}
-                      className={`w-full flex items-center justify-between border-2 rounded-lg p-4 transition-colors ${
-                        shippingMethod === 'pac' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                      className={`w-full flex items-center justify-between border rounded-sm p-4 transition-all duration-300 cursor-pointer ${
+                        shippingMethod === 'pac' 
+                          ? 'border-brand-gold bg-brand-gold/5 shadow-sm' 
+                          : 'border-brand-tan/15 hover:border-brand-tan/30 bg-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            shippingMethod === 'pac' ? 'border-blue-600' : 'border-gray-300'
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                            shippingMethod === 'pac' ? 'border-brand-gold' : 'border-brand-tan/30'
                           }`}
                         >
                           {shippingMethod === 'pac' && (
-                            <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-brand-gold" />
                           )}
                         </div>
                         <div className="text-left">
-                          <p className="font-bold text-sm">PAC - Correios</p>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-500">5 a 7 dias</span>
+                          <p className="font-bold text-sm text-brand-brown">PAC - Correios</p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-xs text-brand-charcoal/50">5 a 7 dias úteis</span>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src="/pac-correios-logo.png"
                               alt="PAC"
-                              className="h-4 object-contain"
+                              className="h-4 object-contain opacity-70"
                             />
                           </div>
                         </div>
                       </div>
-                      <span className="text-sm font-bold">Grátis</span>
+                      <span className="text-sm font-bold text-brand-tan">Grátis</span>
                     </button>
 
                     {/* SEDEX */}
                     <button
                       onClick={() => setShippingMethod('sedex')}
-                      className={`w-full flex items-center justify-between border-2 rounded-lg p-4 transition-colors ${
-                        shippingMethod === 'sedex'
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200'
+                      className={`w-full flex items-center justify-between border rounded-sm p-4 transition-all duration-300 cursor-pointer ${
+                        shippingMethod === 'sedex' 
+                          ? 'border-brand-gold bg-brand-gold/5 shadow-sm' 
+                          : 'border-brand-tan/15 hover:border-brand-tan/30 bg-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            shippingMethod === 'sedex' ? 'border-blue-600' : 'border-gray-300'
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                            shippingMethod === 'sedex' ? 'border-brand-gold' : 'border-brand-tan/30'
                           }`}
                         >
                           {shippingMethod === 'sedex' && (
-                            <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-brand-gold" />
                           )}
                         </div>
                         <div className="text-left">
-                          <p className="font-bold text-sm">SEDEX</p>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-500">1 a 3 dias</span>
+                          <p className="font-bold text-sm text-brand-brown">SEDEX</p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-xs text-brand-charcoal/50">1 a 3 dias úteis</span>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src="/sedex-logo.webp"
                               alt="SEDEX"
-                              className="h-4 object-contain"
+                              className="h-4 object-contain opacity-70"
                             />
                           </div>
                         </div>
                       </div>
-                      <span className="text-sm font-bold">R$ 9,79</span>
+                      <span className="text-sm font-bold text-brand-brown">R$ 9,79</span>
                     </button>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex gap-4 pt-4">
                     <button
                       onClick={() => setCurrentStep(1)}
-                      className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+                      className="flex items-center gap-1 text-xs uppercase tracking-wider font-bold text-brand-tan hover:text-brand-brown transition-colors cursor-pointer"
                     >
                       <ChevronLeft className="w-4 h-4" /> Voltar
                     </button>
                     <button
                       onClick={() => canGoStep3 && setCurrentStep(3)}
                       disabled={!canGoStep3}
-                      className="flex-1 py-3.5 rounded-full text-white font-bold text-sm uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-black"
+                      className="flex-1 py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan disabled:bg-brand-tan/30 disabled:text-brand-brown/40 font-bold text-xs uppercase tracking-widest disabled:cursor-not-allowed transition-all duration-300 shadow-sm cursor-pointer"
                     >
                       Ir Para Pagamento
                     </button>
@@ -793,34 +809,36 @@ export default function CheckoutPage() {
             </div>
 
             {/* Step 3: Pagamento */}
-            <div className={`bg-white rounded-lg border p-5 ${currentStep !== 3 ? 'opacity-60' : ''}`}>
+            <div className={`bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm transition-opacity duration-300 ${currentStep !== 3 ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      stepNum >= 3 ? 'text-white bg-[#67f104]' : 'bg-gray-200 text-gray-500'
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold tracking-tighter ${
+                      stepNum >= 3 
+                        ? 'text-brand-brown bg-brand-gold' 
+                        : 'bg-brand-offwhite border border-brand-tan/20 text-brand-charcoal/40'
                     }`}
                   >
                     3
                   </span>
-                  <h2 className="font-bold text-base uppercase tracking-wide">Pagamento</h2>
+                  <h2 className="font-bold text-base uppercase tracking-wider text-brand-brown">Pagamento</h2>
                 </div>
-                <span className="text-xs text-gray-400">3 DE 3</span>
+                <span className="text-xs text-brand-charcoal/40 tracking-wider font-semibold">3 DE 3</span>
               </div>
-              <p className="text-sm text-gray-500 mb-4 ml-8">
+              <p className="text-xs text-brand-charcoal/60 mb-6 ml-8 font-light">
                 Preencha os dados de entrega para continuar
               </p>
 
               {currentStep === 3 && (
-                <div className="space-y-4">
+                <div className="space-y-5 ml-0 sm:ml-8 animate-in fade-in duration-300">
                   {paymentMethod === 'pix' && (
                     <>
-                      <div className="relative border-2 rounded-xl p-4 border-black">
-                        <span className="absolute -top-2 right-3 text-white text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#67f104]">
+                      <div className="relative border rounded-sm p-5 border-brand-gold bg-brand-gold/5 shadow-sm animate-in zoom-in-95 duration-300">
+                        <span className="absolute -top-2 right-3 text-brand-brown text-[9px] tracking-wider uppercase font-bold px-2 py-0.5 rounded-sm bg-brand-gold shadow-sm">
                           5% OFF
                         </span>
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 flex items-center justify-center">
+                          <div className="w-10 h-10 flex items-center justify-center bg-white rounded-sm p-1 border border-brand-tan/10 shadow-sm">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src="https://cdn.shopify.com/s/files/1/0715/5292/5807/files/logo-pix.png?v=1776298269"
@@ -829,20 +847,20 @@ export default function CheckoutPage() {
                             />
                           </div>
                           <div>
-                            <p className="font-bold text-sm text-gray-800">PIX</p>
-                            <p className="text-xs font-medium text-[#67f104]">
+                            <p className="font-bold text-sm text-brand-brown">PIX</p>
+                            <p className="text-xs font-semibold text-emerald-700 animate-pulse">
                               Aprovação imediata · 5% de desconto
                             </p>
                           </div>
                         </div>
-                        <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
-                          <p className="text-xs text-gray-500">
+                        <div className="mt-4 pt-4 border-t border-brand-tan/10 space-y-2">
+                          <p className="text-[11px] text-brand-charcoal/60 leading-relaxed font-light">
                             O código Pix expira em 30 minutos após finalizar a compra.
                           </p>
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm text-gray-700">Valor no Pix:</p>
+                          <div className="flex items-center justify-between pt-1">
+                            <p className="text-xs font-bold uppercase tracking-wider text-brand-brown">Valor no Pix:</p>
                             <div className="text-right">
-                              <span className="font-bold text-[#67f104]">
+                              <span className="font-extrabold text-sm text-brand-brown">
                                 {formatPrice(finalTotal)}
                               </span>
                             </div>
@@ -853,19 +871,19 @@ export default function CheckoutPage() {
                       {/* Cartão - Indisponível */}
                       <div
                         aria-disabled="true"
-                        className="relative border-2 rounded-xl p-4 border-gray-200 bg-gray-50 opacity-70 cursor-not-allowed select-none"
+                        className="relative border rounded-sm p-4 border-brand-tan/10 bg-brand-offwhite/50 opacity-60 cursor-not-allowed select-none"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 flex items-center justify-center text-gray-400">
-                              <CreditCard className="w-7 h-7" />
+                            <div className="w-10 h-10 flex items-center justify-center text-brand-charcoal/40 bg-brand-offwhite border border-brand-tan/5 rounded-sm">
+                              <CreditCard className="w-5 h-5" />
                             </div>
                             <div>
-                              <p className="font-bold text-sm text-gray-500">Cartão de crédito</p>
-                              <p className="text-xs text-gray-400">Sistema está fora do ar.</p>
+                              <p className="font-bold text-sm text-brand-charcoal/50">Cartão de crédito</p>
+                              <p className="text-xs text-brand-charcoal/40 font-light">Sistema temporariamente indisponível.</p>
                             </div>
                           </div>
-                          <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-charcoal/50 bg-brand-charcoal/10 px-2 py-1 rounded-sm">
                             Indisponível
                           </span>
                         </div>
@@ -874,7 +892,7 @@ export default function CheckoutPage() {
                       <button
                         onClick={handleGeneratePix}
                         disabled={pixLoading}
-                        className="w-full py-4 rounded-lg text-white font-extrabold text-base uppercase tracking-wider transition-colors disabled:opacity-50 flex items-center justify-center gap-2 bg-black"
+                        className="w-full py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan font-extrabold text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-md mt-4"
                       >
                         {pixLoading ? (
                           <>
@@ -890,9 +908,9 @@ export default function CheckoutPage() {
 
                   {paymentMethod === 'card' && (
                     <>
-                      <div className="border-2 rounded-xl p-4 space-y-3">
+                      <div className="border border-brand-tan/15 rounded-sm p-5 space-y-4">
                         <div>
-                          <label className="block text-xs font-medium mb-1">
+                          <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">
                             Número do cartão
                           </label>
                           <input
@@ -905,11 +923,11 @@ export default function CheckoutPage() {
                             }
                             placeholder="0000 0000 0000 0000"
                             inputMode="numeric"
-                            className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium mb-1">
+                          <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">
                             Nome impresso no cartão
                           </label>
                           <input
@@ -921,12 +939,12 @@ export default function CheckoutPage() {
                               }))
                             }
                             placeholder="COMO ESTÁ NO CARTÃO"
-                            className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium mb-1">Validade</label>
+                            <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">Validade</label>
                             <input
                               value={card.exp}
                               onChange={(e) =>
@@ -934,11 +952,11 @@ export default function CheckoutPage() {
                               }
                               placeholder="MM/AA"
                               inputMode="numeric"
-                              className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                              className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium mb-1">CVV</label>
+                            <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">CVV</label>
                             <input
                               value={card.cvv}
                               onChange={(e) =>
@@ -949,16 +967,16 @@ export default function CheckoutPage() {
                               }
                               placeholder="000"
                               inputMode="numeric"
-                              className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                              className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs font-medium mb-1">Parcelamento</label>
+                          <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">Parcelamento</label>
                           <select
                             value={installments}
                             onChange={(e) => setInstallments(parseInt(e.target.value, 10))}
-                            className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white"
+                            className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-white"
                           >
                             {Array.from({ length: 12 }, (_, k) => k + 1).map((n) => {
                               const totalCents = Math.round(finalTotal * 100);
@@ -975,14 +993,14 @@ export default function CheckoutPage() {
                               );
                             })}
                           </select>
-                          <p className="text-[11px] text-gray-500 mt-1">Até 3x sem juros!</p>
+                          <p className="text-[11px] text-brand-tan font-semibold mt-1">Até 3x sem juros!</p>
                         </div>
                       </div>
 
                       <button
                         onClick={handleCardPayment}
                         disabled={cardLoading || !cardValid}
-                        className="w-full py-4 rounded-lg text-white font-extrabold text-base uppercase tracking-wider transition-colors disabled:opacity-50 flex items-center justify-center gap-2 bg-black"
+                        className="w-full py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan font-extrabold text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-md mt-4"
                       >
                         {cardLoading ? (
                           <>
@@ -1001,27 +1019,27 @@ export default function CheckoutPage() {
 
             {/* PIX QR Code Screen */}
             {currentStep === 'pix' && pixData && (
-              <div className="bg-white rounded-lg border p-6 text-center space-y-6">
+              <div className="bg-white rounded-sm border border-brand-tan/15 p-8 text-center space-y-6 shadow-md animate-in fade-in zoom-in-95 duration-500">
                 <div>
-                  <h2 className="font-extrabold text-2xl text-gray-900">Já é quase seu...</h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Pague seu pix dentro de 30 minutos para garantir sua compra.
+                  <h2 className="font-display font-semibold text-2xl text-brand-brown">Já é quase seu...</h2>
+                  <p className="text-xs text-brand-charcoal/60 mt-1 font-light">
+                    Pague seu Pix dentro de 30 minutos para garantir sua compra.
                   </p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="https://cdn.shopify.com/s/files/1/0715/5292/5807/files/pix-checkout.png?v=1776317496"
                     alt="Pix checkout"
-                    className="mx-auto h-auto w-[70%]"
+                    className="mx-auto h-auto w-[70%] max-w-[280px] opacity-90"
                     loading="lazy"
                   />
-                  <p className="text-sm font-medium text-[#69F100]">
+                  <p className="text-sm font-semibold text-brand-tan animate-pulse">
                     Aponte a câmera do seu celular
                   </p>
                   <div className="flex justify-center">
-                    <div className="bg-white border-2 border-gray-200 rounded-xl p-4 inline-block">
+                    <div className="bg-white border border-brand-tan/15 rounded-sm p-4 inline-block shadow-sm">
                       {pixData.qrCodeUrl && pixData.qrCodeUrl.startsWith('http') ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -1041,32 +1059,32 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="flex justify-center">
-                  <span className="inline-flex items-center gap-2 bg-[#69F100] text-white font-bold text-sm px-6 py-2.5 rounded-full">
+                  <span className="inline-flex items-center gap-2 bg-brand-gold text-brand-brown font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-full shadow-sm">
                     Aguardando pagamento
                     <span className="flex gap-0.5">
                       <span
-                        className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-brand-brown rounded-full animate-bounce"
                         style={{ animationDelay: '0ms' }}
                       />
                       <span
-                        className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-brand-brown rounded-full animate-bounce"
                         style={{ animationDelay: '150ms' }}
                       />
                       <span
-                        className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"
+                        className="w-1.5 h-1.5 bg-brand-brown rounded-full animate-bounce"
                         style={{ animationDelay: '300ms' }}
                       />
                     </span>
                   </span>
                 </div>
 
-                <div className="bg-gray-50 border rounded-lg p-3 break-all text-xs text-gray-600 font-mono max-h-20 overflow-y-auto">
+                <div className="bg-brand-offwhite/50 border border-brand-tan/10 rounded-sm p-3 break-all text-xs text-brand-charcoal/80 font-mono max-h-20 overflow-y-auto">
                   {pixData.qrCode}
                 </div>
 
                 <button
                   onClick={handleCopyPix}
-                  className="w-full py-3.5 rounded-full text-white font-bold text-sm uppercase tracking-wide transition-colors bg-[#69F100] hover:bg-[#5cd400] flex items-center justify-center gap-2 shadow-md"
+                  className="w-full py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                 >
                   {copied ? (
                     <>
@@ -1081,34 +1099,34 @@ export default function CheckoutPage() {
                   )}
                 </button>
 
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-brand-charcoal">
                   Valor do Pix:{' '}
-                  <span className="font-bold text-[#69F100]">
+                  <span className="font-extrabold text-brand-brown">
                     {formatPrice(pixData.amount / 100)}
                   </span>
                 </p>
 
-                <div className="text-left space-y-3">
-                  <h3 className="font-bold text-sm text-gray-800">Como pagar o pix:</h3>
-                  <div className="space-y-2.5">
+                <div className="text-left space-y-4 pt-4 border-t border-brand-tan/10 animate-in slide-in-from-bottom duration-500">
+                  <h3 className="font-bold text-sm text-brand-brown uppercase tracking-wider">Como pagar o Pix:</h3>
+                  <div className="space-y-3">
                     {[
-                      <>Clique em <strong>copiar o código PIX</strong>, logo acima</>,
-                      <><strong>Acesse</strong> o app do seu banco</>,
-                      <>Vá até a opção <strong>PIX</strong></>,
-                      <>Escolha a opção <strong>&ldquo;COPIA E COLA&rdquo;</strong></>,
-                      <><strong>Insira</strong> o código copiado e finalize seu pagamento</>,
+                      <>Clique em <strong>copiar o código PIX</strong> acima</>,
+                      <><strong>Acesse</strong> o app do seu banco preferido</>,
+                      <>Vá na área de <strong>PIX</strong></>,
+                      <>Escolha a opção <strong>&ldquo;Copia e Cola&rdquo;</strong></>,
+                      <><strong>Insira</strong> o código copiado e confirme o pagamento</>,
                     ].map((step, idx) => (
                       <div key={idx} className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#67f104] text-white text-xs font-bold flex items-center justify-center mt-0.5">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-brown text-brand-offwhite text-xs font-bold flex items-center justify-center mt-0.5">
                           {idx + 1}
                         </span>
-                        <p className="text-sm text-gray-700">{step}</p>
+                        <p className="text-xs sm:text-sm text-brand-charcoal/80 leading-relaxed font-light">{step}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <Link href="/" className="text-sm text-gray-500 underline hover:text-gray-700">
+                <Link href="/" className="inline-block text-xs uppercase tracking-wider font-bold text-brand-tan hover:text-brand-brown transition-colors underline pt-2">
                   Voltar à loja
                 </Link>
               </div>
@@ -1116,19 +1134,19 @@ export default function CheckoutPage() {
 
             {/* Card success screen */}
             {currentStep === 'card-success' && (
-              <div className="bg-white rounded-lg border p-6 text-center space-y-5">
-                <div className="mx-auto w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center">
-                  <Check className="w-9 h-9 text-white" />
+              <div className="bg-white rounded-sm border border-brand-tan/15 p-8 text-center space-y-5 shadow-md animate-in zoom-in-95 duration-500">
+                <div className="mx-auto w-16 h-16 rounded-full bg-brand-gold flex items-center justify-center shadow-inner">
+                  <Check className="w-8 h-8 text-brand-brown" />
                 </div>
                 <div>
-                  <h2 className="font-extrabold text-2xl text-gray-900">Pedido recebido!</h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Seu pagamento está sendo processado. Você receberá uma confirmação por e-mail.
+                  <h2 className="font-display font-semibold text-2xl text-brand-brown">Pedido recebido!</h2>
+                  <p className="text-xs text-brand-charcoal/60 mt-1 font-light">
+                    Seu pagamento está sendo processado. Você receberá uma confirmação por e-mail em instantes.
                   </p>
                 </div>
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-brand-charcoal pt-2">
                   Total:{' '}
-                  <span className="font-bold">
+                  <span className="font-extrabold text-brand-brown">
                     {formatPrice(
                       calcInstallment(Math.round(finalTotal * 100), installments).totalCents / 100
                     )}
@@ -1146,7 +1164,7 @@ export default function CheckoutPage() {
                 </div>
                 <Link
                   href="/"
-                  className="block w-full py-3.5 rounded-full text-white font-bold text-sm uppercase tracking-wide bg-black text-center"
+                  className="block w-full py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan text-center font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-sm cursor-pointer mt-4"
                 >
                   Voltar à loja
                 </Link>
@@ -1156,65 +1174,65 @@ export default function CheckoutPage() {
 
           {/* Right: Order Summary */}
           <div className="w-full lg:w-80 order-1 lg:order-2">
-            <div className="bg-white rounded-lg border p-5 sticky top-24">
-              <h3 className="font-bold text-base mb-4">Resumo do pedido</h3>
+            <div className="bg-white rounded-sm border border-brand-tan/15 p-6 sticky top-24 shadow-sm">
+              <h3 className="font-bold text-sm text-brand-brown uppercase tracking-wider mb-4">Resumo do pedido</h3>
 
-              <div className="space-y-2 text-sm border-b pb-3 mb-3">
+              <div className="space-y-3 text-xs text-brand-charcoal/80 border-b border-brand-tan/10 pb-4 mb-4 font-light">
                 <div className="flex justify-between">
                   <span>Produtos</span>
-                  <span>{formatPrice(total)}</span>
+                  <span className="font-semibold text-brand-brown">{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Frete ({shippingMethod === 'sedex' ? 'SEDEX' : 'PAC'})</span>
-                  <span className={shippingCost === 0 ? 'font-medium text-[#67f104]' : ''}>
+                  <span className={shippingCost === 0 ? 'font-semibold text-brand-tan' : 'font-semibold text-brand-brown'}>
                     {shippingCost === 0 ? 'Grátis' : formatPrice(shippingCost)}
                   </span>
                 </div>
                 {pixDiscount > 0 && (
-                  <div className="flex justify-between text-[#67f104]">
+                  <div className="flex justify-between text-brand-tan font-semibold">
                     <span>Desconto Pix (5%)</span>
                     <span>-{formatPrice(pixDiscount)}</span>
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-between font-bold text-base mb-4">
+              <div className="flex justify-between font-bold text-base text-brand-brown mb-6">
                 <span>Total</span>
-                <span>{formatPrice(finalTotal)}</span>
+                <span className="font-extrabold">{formatPrice(finalTotal)}</span>
               </div>
 
               {/* Cart items */}
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
                 {items.map((item, i) => (
-                  <div key={i} className="flex gap-3 border rounded-md p-2">
+                  <div key={i} className="flex gap-3 border border-brand-tan/10 rounded-sm p-3 bg-brand-offwhite/10 hover:bg-brand-offwhite/20 transition-all duration-300">
                     {item.image && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-14 h-14 rounded object-cover"
+                        className="w-12 h-12 rounded-sm object-cover border border-brand-tan/10 shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium leading-tight">{item.title}</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">
+                      <p className="text-xs font-semibold text-brand-brown leading-tight truncate">{item.title}</p>
+                      <p className="text-[10px] text-brand-charcoal/50 mt-0.5">
                         {Object.values(item.selectedOptions).join(' / ')}
                       </p>
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="text-xs font-bold">
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-xs font-bold text-brand-brown">
                           {formatPrice(item.price * item.quantity)}
                         </span>
-                        <div className="flex items-center border rounded">
+                        <div className="flex items-center border border-brand-tan/20 rounded-sm bg-white overflow-hidden">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="px-1.5 py-0.5 text-gray-500 hover:text-black"
+                            className="px-1.5 py-1 text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-offwhite transition-colors cursor-pointer animate-press"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="text-xs px-2">{item.quantity}</span>
+                          <span className="text-xs px-2 font-semibold text-brand-brown">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="px-1.5 py-0.5 text-gray-500 hover:text-black"
+                            className="px-1.5 py-1 text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-offwhite transition-colors cursor-pointer animate-press"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -1230,63 +1248,69 @@ export default function CheckoutPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-100 border-t py-8 mt-8">
-        <div className="container mx-auto px-4 text-center space-y-4">
-          <p className="text-sm font-semibold text-gray-700">Formas de pagamento</p>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://cdn.shopify.com/s/files/1/0715/5292/5807/files/bandeiras-cartoes-credito-739px.webp?v=1776300423"
-            alt="Formas de pagamento"
-            className="mx-auto w-[65%]"
-          />
-          <button
-            onClick={() => setShowStoreInfo(true)}
-            className="text-sm text-gray-700 underline hover:no-underline"
-          >
-            Informações da loja
-          </button>
-          <p className="text-xs text-gray-500">Parada de Ouro | Todos os direitos reservados</p>
+      <footer className="bg-brand-charcoal text-brand-offwhite/85 border-t border-brand-offwhite/5 py-10 mt-12 font-sans">
+        <div className="container mx-auto px-4 text-center space-y-6">
+          <div>
+            <p className="text-xs tracking-[0.2em] font-bold text-brand-gold uppercase mb-3">Formas de pagamento</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://cdn.shopify.com/s/files/1/0715/5292/5807/files/bandeiras-cartoes-credito-739px.webp?v=1776300423"
+              alt="Formas de pagamento"
+              className="mx-auto w-full max-w-[400px] opacity-80 filter brightness-90 saturate-50"
+            />
+          </div>
+          <div>
+            <button
+              onClick={() => setShowStoreInfo(true)}
+              className="text-xs tracking-widest font-bold text-brand-gold hover:text-brand-tan uppercase transition-colors cursor-pointer"
+            >
+              Informações da loja
+            </button>
+          </div>
+          <p className="text-[10px] text-brand-offwhite/40 tracking-wider font-light">
+            &copy; {new Date().getFullYear()} Parada de Ouro | Todos os direitos reservados
+          </p>
         </div>
       </footer>
 
       {/* Store Info Modal */}
       {showStoreInfo && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-brand-brown/60 backdrop-blur-sm"
           onClick={() => setShowStoreInfo(false)}
         >
           <div
-            className="bg-white rounded-t-lg shadow-xl w-full max-w-md max-h-[70vh] overflow-y-auto p-6 space-y-5 mx-[10px]"
+            className="bg-brand-brown border border-brand-gold/15 rounded-t-sm shadow-2xl w-full max-w-md max-h-[70vh] overflow-y-auto p-8 space-y-6 mx-[10px] text-brand-offwhite animate-in slide-in-from-bottom duration-300"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Informações da loja</h2>
+            <div className="flex items-center justify-between pb-2 border-b border-brand-gold/10 font-sans">
+              <h2 className="font-semibold text-lg text-brand-gold">Informações da loja</h2>
               <button
                 onClick={() => setShowStoreInfo(false)}
-                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                className="text-brand-gold hover:text-brand-tan text-2xl leading-none cursor-pointer"
               >
                 &times;
               </button>
             </div>
 
-            <div>
-              <h3 className="text-gray-900 font-bold text-sm uppercase tracking-wider mb-1">
+            <div className="space-y-2">
+              <h3 className="text-brand-gold font-bold text-xs uppercase tracking-widest">
                 Fale Conosco
               </h3>
-              <div className="w-8 h-0.5 mb-3 bg-[#67f104]" />
-              <div className="space-y-2 text-sm text-gray-500">
+              <div className="w-8 h-0.5 bg-brand-gold mb-3" />
+              <div className="space-y-2 text-xs text-brand-offwhite/70 leading-relaxed font-light">
                 <p>Atendimento: Seg à Sex. 9h30 às 18h e Sáb. 10 às 15h</p>
                 <p>Contato: +55 62 99878-7917</p>
                 <p>Email: contato@paradadeOuro.com</p>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-gray-900 font-bold text-sm uppercase tracking-wider mb-1">
+            <div className="space-y-2">
+              <h3 className="text-brand-gold font-bold text-xs uppercase tracking-widest">
                 Endereço
               </h3>
-              <div className="w-8 h-0.5 mb-3 bg-[#67f104]" />
-              <div className="text-sm text-gray-500 space-y-1">
+              <div className="w-8 h-0.5 bg-brand-gold mb-3" />
+              <div className="text-xs text-brand-offwhite/70 leading-relaxed font-light">
                 <p>Atualizar com o endereço correto da loja</p>
               </div>
             </div>
