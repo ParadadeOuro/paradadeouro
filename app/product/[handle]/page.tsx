@@ -383,6 +383,8 @@ export default function ProductPage() {
     product.optionNames.every((name) => v.options[name] === selectedOptions[name])
   );
 
+  const isCaneca = product ? (product.handle.toLowerCase().includes("caneca") || product.title.toLowerCase().includes("caneca")) : false;
+
   // Get all unique values for each option
   function getOptionValues(name: string): string[] {
     if (!product) return [];
@@ -477,7 +479,7 @@ export default function ProductPage() {
         {/* Product layout */}
         <div className="max-w-7xl mx-auto px-6 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* ── Gallery ───────────────────────────────────────────────────── */}
-          <div className="flex gap-4">
+          <div className="flex items-start gap-4">
             {/* Thumbnails */}
             {product.images.length > 1 && (
               <div className="flex flex-col gap-2 w-16 shrink-0">
@@ -492,14 +494,18 @@ export default function ProductPage() {
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={src} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
+                    <img 
+                      src={src} 
+                      alt={`View ${i + 1}`} 
+                      className={`w-full h-full object-cover ${isCaneca ? "object-top" : "object-center"}`} 
+                    />
                   </button>
                 ))}
               </div>
             )}
 
             {/* Main image */}
-            <div className="flex-grow relative aspect-square rounded-sm overflow-hidden bg-[#F0EBE3] shadow-lg">
+            <div className="flex-grow w-full aspect-square relative rounded-sm overflow-hidden bg-[#F0EBE3] shadow-lg">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activeImage}
@@ -509,7 +515,7 @@ export default function ProductPage() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full object-cover ${isCaneca ? "object-top" : "object-center"}`}
                 />
               </AnimatePresence>
 
