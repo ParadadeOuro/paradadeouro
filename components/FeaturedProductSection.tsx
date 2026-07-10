@@ -192,7 +192,7 @@ export default function FeaturedProductSection() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full h-full object-cover object-top"
+                  className="w-full h-full object-contain p-4"
                 />
               </AnimatePresence>
 

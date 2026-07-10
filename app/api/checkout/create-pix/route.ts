@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       })) || []
     };
 
-    const res = await fetch("https://api.primecashbrasil.com.br/v2/transactions", {
+    const res = await fetch("https://api.primecashbrasil.com/v2/transactions", {
       method: "POST",
       headers: { 
         Authorization: `Basic ${Buffer.from(apiKey + ':').toString('base64')}`,

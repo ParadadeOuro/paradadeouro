@@ -573,7 +573,7 @@ export default function CheckoutPage() {
           <Link href="/" className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.jpg"
+              src="/images/logo.png"
               alt="Parada de Ouro"
               className="h-10 sm:h-12 w-auto object-contain cursor-pointer transition-transform hover:scale-105 duration-300"
             />
@@ -591,7 +591,7 @@ export default function CheckoutPage() {
       <div className="bg-[#1a0f08] border-b border-brand-gold/10 text-brand-offwhite/90 py-2.5 text-xs sm:text-sm font-semibold">
         <div className="container mx-auto px-4 flex items-center justify-center gap-3">
           <span className="flex items-center gap-1.5">
-            <span aria-hidden style={{ filter: 'hue-rotate(90deg) saturate(2)' }}>🔥</span>
+            <span aria-hidden>⭐</span>
             <span>
               Oferta expira em{' '}
               <span className="text-brand-gold font-bold tabular-nums">
