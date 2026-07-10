@@ -65,7 +65,7 @@ export default function CheckoutPage() {
   const ss = String(secondsLeft % 60).padStart(2, '0');
 
   const [showStoreInfo, setShowStoreInfo] = useState(false);
-  const [paymentMethod] = useState<'pix' | 'card'>('pix');
+  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
   const [shippingMethod, setShippingMethod] = useState<'pac' | 'sedex'>('pac');
   const [pixData, setPixData] = useState<PixData | null>(null);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
@@ -436,7 +436,108 @@ export default function CheckoutPage() {
     card.cvv.length >= 3;
 
   const handleCardPayment = async () => {
-    toast.error('Pagamento com cartão indisponível. Utilize PIX.');
+    if (!cardValid) {
+      toast.error('Preencha os dados do cartão corretamente.');
+      return;
+    }
+    
+    setCardLoading(true);
+    
+    // Generate UUID if we haven't already
+    let currentExternalRef = externalRef;
+    if (!currentExternalRef) {
+      currentExternalRef = crypto.randomUUID();
+      setExternalRef(currentExternalRef);
+    }
+    
+    try {
+      // 1. Create order in Supabase via api/checkout/create-order
+      const orderRes = await fetch('/api/checkout/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          externalRef: currentExternalRef,
+          items: items.map(item => ({
+            id: item.id,
+            title: item.title,
+            quantity: item.quantity,
+            price: item.price,
+            options: item.selectedOptions
+          })),
+          amount: Math.round(finalTotal * 100), // in cents
+          payer: {
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            document: user.cpf,
+          },
+          delivery: {
+            fee: Math.round(shippingCost * 100),
+            address: {
+              line1: `${user.address.street}, ${user.address.number}`,
+              city: user.address.city,
+              state: user.address.state,
+              zipCode: user.address.zipCode,
+              country: 'BR'
+            }
+          },
+          paymentMethod: 'card'
+        })
+      });
+      
+      const orderData = await orderRes.json();
+      
+      if (!orderRes.ok) {
+        throw new Error(orderData.error || 'Erro ao salvar pedido.');
+      }
+      
+      const dbOrderId = orderData.orderId;
+      setCreatedOrderId(dbOrderId);
+      
+      // 2. Call our create-card api
+      const paymentRes = await fetch('/api/checkout/create-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Math.round(finalTotal * 100),
+          externalRef: currentExternalRef,
+          installments: installments,
+          payer: {
+            name: user.name,
+            email: user.email,
+            document: user.cpf,
+          },
+          items: items.map(i => ({
+            title: i.title,
+            quantity: i.quantity,
+            unit_price: Math.round(i.price * 100)
+          })),
+          card: {
+            number: card.number,
+            holder: card.holder,
+            exp: card.exp,
+            cvv: card.cvv
+          }
+        })
+      });
+      
+      const paymentData = await paymentRes.json();
+      
+      if (!paymentRes.ok) {
+        throw new Error(paymentData.error || 'Erro ao processar cartão.');
+      }
+      
+      // Clear cart
+      clearCart();
+      setCurrentStep('card-success');
+      toast.success('Pedido processado com sucesso!');
+      
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || 'Erro inesperado.');
+    } finally {
+      setCardLoading(false);
+    }
   };
 
   const handleCopyPix = async () => {
@@ -839,6 +940,30 @@ export default function CheckoutPage() {
 
               {currentStep === 3 && (
                 <div className="space-y-5 ml-0 sm:ml-8 animate-in fade-in duration-300">
+                  {/* Payment Method Tabs */}
+                  <div className="flex bg-brand-offwhite/50 border border-brand-tan/20 rounded-sm p-1">
+                    <button
+                      onClick={() => setPaymentMethod('pix')}
+                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-sm transition-all duration-300 ${
+                        paymentMethod === 'pix'
+                          ? 'bg-white shadow-sm text-brand-brown'
+                          : 'text-brand-charcoal/50 hover:text-brand-charcoal/80'
+                      }`}
+                    >
+                      PIX (-5%)
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('card')}
+                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-sm transition-all duration-300 ${
+                        paymentMethod === 'card'
+                          ? 'bg-white shadow-sm text-brand-brown'
+                          : 'text-brand-charcoal/50 hover:text-brand-charcoal/80'
+                      }`}
+                    >
+                      Cartão
+                    </button>
+                  </div>
+
                   {paymentMethod === 'pix' && (
                     <>
                       <div className="relative border rounded-sm p-5 border-brand-gold bg-brand-gold/5 shadow-sm animate-in zoom-in-95 duration-300">
@@ -873,27 +998,6 @@ export default function CheckoutPage() {
                               </span>
                             </div>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Cartão - Indisponível */}
-                      <div
-                        aria-disabled="true"
-                        className="relative border rounded-sm p-4 border-brand-tan/10 bg-brand-offwhite/50 opacity-60 cursor-not-allowed select-none"
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 flex items-center justify-center text-brand-charcoal/40 bg-brand-offwhite border border-brand-tan/5 rounded-sm">
-                              <CreditCard className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <p className="font-bold text-sm text-brand-charcoal/50">Cartão de crédito</p>
-                              <p className="text-xs text-brand-charcoal/40 font-light">Sistema temporariamente indisponível.</p>
-                            </div>
-                          </div>
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-charcoal/50 bg-brand-charcoal/10 px-2 py-1 rounded-sm">
-                            Indisponível
-                          </span>
                         </div>
                       </div>
 
