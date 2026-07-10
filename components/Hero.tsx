@@ -64,14 +64,14 @@ export default function Hero() {
           >
             <a
               href="/catalogue"
-              className="px-8 py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown font-semibold tracking-widest text-xs uppercase rounded-sm shadow-lg hover:shadow-brand-gold/10 transition-all duration-300 flex items-center justify-center gap-3 group"
+              className="px-8 py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown font-semibold tracking-widest text-xs uppercase rounded-full shadow-lg hover:shadow-brand-gold/10 transition-all duration-300 flex items-center justify-center gap-3 group"
             >
               Ver Catálogo
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#nossa-história"
-              className="px-8 py-4 border border-brand-offwhite/20 hover:border-brand-gold hover:bg-brand-offwhite/5 text-brand-offwhite font-semibold tracking-widest text-xs uppercase rounded-sm transition-all duration-300 flex items-center justify-center"
+              className="px-8 py-4 border border-brand-offwhite/20 hover:border-brand-gold hover:bg-brand-offwhite/5 text-brand-offwhite font-semibold tracking-widest text-xs uppercase rounded-full transition-all duration-300 flex items-center justify-center"
             >
               Conhecer Nossa História
             </a>

@@ -388,11 +388,13 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        {/* Discount badge */}
         {hasDiscount && (
-          <span className="absolute top-2 left-2 bg-[#D4AF37] text-[#2C1A0E] text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
-            -{discountPct}%
-          </span>
+          <div className="absolute top-2 left-2 w-14 h-14 flex items-center justify-center">
+            <img src="/images/discount.png" alt="Desconto" className="absolute inset-0 w-full h-full animate-[spin_8s_linear_infinite]" />
+            <span className="relative z-10 text-white text-[13px] font-black tracking-widest drop-shadow-md">
+              -{discountPct}%
+            </span>
+          </div>
         )}
 
         {/* Vendor badge */}
@@ -429,7 +431,7 @@ function ProductCard({ product }: { product: Product }) {
               {product.price ? formatPrice(product.price) : "—"}
             </p>
           </div>
-          <span className="shrink-0 px-3 py-1.5 bg-[#2C1A0E] group-hover:bg-[#D4AF37] text-white group-hover:text-[#2C1A0E] text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-200">
+          <span className="shrink-0 px-3 py-1.5 bg-[#2C1A0E] group-hover:bg-[#D4AF37] text-white group-hover:text-[#2C1A0E] text-[10px] font-bold uppercase tracking-widest rounded-full transition-all duration-200">
             Ver
           </span>
         </div>

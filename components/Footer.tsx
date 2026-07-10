@@ -13,12 +13,7 @@ export default function Footer() {
         {/* Brand Info */}
         <div className="lg:col-span-4 space-y-6">
           <div className="flex flex-col">
-            <span className="font-display text-2xl font-bold tracking-widest text-brand-gold">
-              PARADA DE OURO
-            </span>
-            <span className="text-[9px] tracking-[0.3em] font-sans text-brand-tan uppercase mt-1">
-              Premium Western Wear
-            </span>
+            <img src="/images/logo.png" alt="Parada de Ouro" className="h-24 w-auto object-contain self-start" />
           </div>
           <p className="text-xs text-brand-offwhite/60 font-light leading-relaxed max-w-sm">
             Criando moda country premium para a nova era do agronegócio brasileiro. Unimos a beleza do feito à mão com a elegância do estilo western de luxo.
@@ -45,7 +40,7 @@ export default function Footer() {
         <div className="lg:col-span-2 space-y-4">
           <h4 className="text-xs font-semibold tracking-wider text-brand-gold uppercase">Nossa Marca</h4>
           <ul className="space-y-2.5 text-xs text-brand-offwhite/70 font-light">
-            <li><a href="#nossa-história" className="hover:text-brand-gold transition-colors">Nossa Origem</a></li>
+            <li><a href="/" className="hover:text-brand-gold transition-colors">Página Principal</a></li>
           </ul>
         </div>
 

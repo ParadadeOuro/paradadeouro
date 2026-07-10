@@ -53,7 +53,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center group">
-            <img src="/logo.jpg" alt="Parada de Ouro" className="h-12 w-auto" />
+            <img src="/images/logo.png" alt="Parada de Ouro" className="h-16 lg:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           </a>
 
           {/* Desktop Nav Links */}
@@ -136,7 +136,7 @@ export default function Navbar() {
             </button>
             <a
               href="#coleções"
-              className="px-6 py-2.5 bg-brand-gold hover:bg-brand-tan text-brand-brown font-medium text-xs tracking-widest uppercase rounded-sm shadow-sm transition-all duration-300 flex items-center gap-2"
+              className="px-6 py-2.5 bg-brand-gold hover:bg-brand-tan text-brand-brown font-medium text-xs tracking-widest uppercase rounded-full shadow-sm transition-all duration-300 flex items-center gap-2"
             >
               Comprar
               <ArrowRight className="w-3.5 h-3.5" />
@@ -246,7 +246,7 @@ export default function Navbar() {
               <a
                 href="#coleções"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown text-center font-bold tracking-widest uppercase rounded-sm shadow-md transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown text-center font-bold tracking-widest uppercase rounded-full shadow-md transition-all flex items-center justify-center gap-2"
               >
                 Explorar Coleção
                 <ArrowRight className="w-4 h-4" />

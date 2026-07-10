@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 
 export default function BrandStory() {
   return (
-    <section id="nossa-história" className="py-32 md:py-40 bg-brand-offwhite text-brand-brown overflow-hidden">
+    <section id="nossa-história" className="py-16 md:py-24 bg-brand-offwhite text-brand-brown overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 

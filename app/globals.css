@@ -7,7 +7,13 @@
   --brand-tan: #A67C52;
   --brand-offwhite: #F8F5F0;
   --brand-charcoal: #232323;
-  --brand-gold: #C9A76A;
+  --brand-gold: #D09D2E; /* Amarelo da logo Parada de Ouro */
+
+  /* Promocionais / Auxiliares */
+  --promo-moss: #4A5D23; /* Verde Musgo */
+  --promo-flame: #D6001C; /* Vermelho mais contrastado */
+  --promo-babyblue: #89CFF0; /* Azul Bebê */
+  --promo-yellow: #E5A937; /* Amarelo Parada de Ouro extra */
 
   /* Announcement bar fixed height — used by Navbar offset and Hero padding */
   --announcement-h: 32px;
@@ -23,6 +29,11 @@
   --color-brand-charcoal: var(--brand-charcoal);
   --color-brand-gold: var(--brand-gold);
 
+  --color-promo-moss: var(--promo-moss);
+  --color-promo-flame: var(--promo-flame);
+  --color-promo-babyblue: var(--promo-babyblue);
+  --color-promo-yellow: var(--promo-yellow);
+
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
 }
@@ -32,6 +43,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
   overflow-x: hidden;
+}
+
+.font-display {
+  letter-spacing: 0.05em; /* Aumenta o distanciamento das letras da Sancreek */
 }
 
 /* Custom scrollbar and aesthetics */

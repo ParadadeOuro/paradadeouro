@@ -45,8 +45,8 @@ const categories = [
 
 export default function FeaturedCategories() {
   return (
-    <section id="coleções" className="py-24 bg-brand-offwhite">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="coleções" className="py-16 md:py-20 bg-brand-offwhite">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
           <div className="max-w-xl">
@@ -65,46 +65,46 @@ export default function FeaturedCategories() {
           </p>
         </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[320px]">
+        {/* Categories List */}
+        <div className="flex flex-col gap-6">
           {categories.map((category, index) => (
             <Link
               key={category.id}
               href={category.link}
-              className={`block relative overflow-hidden group rounded-sm shadow-sm ${category.gridArea}`}
+              className="block group bg-white border border-[#E8E0D5] rounded-sm overflow-hidden hover:shadow-xl transition-all duration-300"
             >
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="w-full h-full relative"
+                className="flex flex-col md:flex-row min-h-[220px]"
               >
-                {/* Card Image */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: `url('${category.image}')` }}
-                />
-                {/* Overlay Gradients */}
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-brown/95 via-brand-brown/40 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+                {/* Image Section */}
+                <div className="w-full md:w-2/5 lg:w-1/3 h-[240px] md:h-auto relative overflow-hidden bg-[#F0EBE3]">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                    style={{ backgroundImage: `url('${category.image}')` }}
+                  />
+                  {/* Subtle overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-brown/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
                 
-                {/* Card Content */}
-                <div className="absolute inset-0 p-8 flex flex-col justify-end text-brand-offwhite">
-                  <span className="text-xs font-semibold tracking-wider text-brand-gold uppercase mb-1">
+                {/* Content Section */}
+                <div className="flex-1 p-8 md:p-10 lg:p-12 flex flex-col justify-center">
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-[#D4AF37] uppercase mb-2">
                     {category.subtitle}
                   </span>
-                  <h3 className="font-display text-2xl lg:text-3xl font-bold tracking-tight mb-2">
+                  <h3 className="font-display text-3xl font-bold tracking-tight text-[#2C1A0E] mb-4 group-hover:text-[#A89070] transition-colors duration-300">
                     {category.title}
                   </h3>
-                  
-                  {/* Expandable description on Hover (desktop) */}
-                  <p className="text-xs text-brand-offwhite/70 font-light leading-relaxed max-h-0 opacity-0 overflow-hidden group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 ease-in-out mb-4">
+                  <p className="text-sm text-[#6B4C2A] font-light leading-relaxed max-w-2xl mb-8">
                     {category.description}
                   </p>
-
-                  <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-brand-gold group-hover:text-brand-offwhite transition-colors duration-300">
-                    Explorar
-                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                  
+                  <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-[#2C1A0E] mt-auto">
+                    Explorar Coleção
+                    <ArrowRight className="w-4 h-4 text-[#D4AF37] transition-transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </motion.div>

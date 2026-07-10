@@ -13,7 +13,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        <FeaturedProductSection />
+        {/* <FeaturedProductSection /> */}
         <FeaturedCategories />
         <ProductGrid />
         <BrandStory />

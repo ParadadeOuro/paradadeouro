@@ -176,13 +176,13 @@ export default function FeaturedProductSection() {
   };
 
   return (
-    <section className="py-32 bg-white text-[#2C1A0E] border-b border-[#E8E0D5]">
+    <section className="py-16 md:py-20 bg-white text-[#2C1A0E] border-b border-[#E8E0D5]">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center reveal-on-scroll">
           
           {/* Left Column: Image Display */}
           <div className="flex flex-col gap-6">
-            <div className="relative aspect-square w-full max-w-lg mx-auto rounded-sm overflow-hidden bg-[#F8F5F0] shadow-md border border-[#E8E0D5]">
+            <div className="relative aspect-square w-full max-w-lg mx-auto rounded-sm overflow-hidden bg-[#F0EBE3] shadow-lg">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activeImage}
@@ -192,7 +192,7 @@ export default function FeaturedProductSection() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full h-full object-contain object-top p-4"
+                  className="w-full h-full object-cover object-top"
                 />
               </AnimatePresence>
 
@@ -283,7 +283,7 @@ export default function FeaturedProductSection() {
                     <button
                       key={m}
                       onClick={() => setSelectedModel(m)}
-                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-sm border transition-all duration-200 cursor-pointer ${
+                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all duration-200 cursor-pointer ${
                         selectedModel === m
                           ? "bg-[#2C1A0E] border-[#2C1A0E] text-[#D4AF37] shadow-sm"
                           : "border-[#C8B99A] text-[#6B4C2A] hover:border-[#2C1A0E] hover:text-[#2C1A0E]"
@@ -399,7 +399,7 @@ export default function FeaturedProductSection() {
               <motion.button
                 onClick={handleAddToCart}
                 whileTap={{ scale: 0.98 }}
-                className={`flex items-center justify-center gap-2.5 w-full py-4.5 font-bold text-sm uppercase tracking-widest rounded-sm shadow-md transition-all duration-300 cursor-pointer ${
+                className={`flex items-center justify-center gap-2.5 w-full py-4.5 font-bold text-sm uppercase tracking-widest rounded-full shadow-md transition-all duration-300 cursor-pointer ${
                   added
                     ? "bg-green-600 text-white"
                     : "bg-[#D4AF37] hover:bg-[#C8A030] text-[#2C1A0E]"

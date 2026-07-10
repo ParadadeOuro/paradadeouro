@@ -73,7 +73,7 @@ export default function CartDrawer() {
                   <Link
                     href="/catalogue"
                     onClick={closeCart}
-                    className="mt-2 px-6 py-2.5 bg-[#2C1A0E] text-[#D4AF37] text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-[#D4AF37] hover:text-[#2C1A0E] transition-all duration-200"
+                    className="mt-2 px-6 py-2.5 bg-[#2C1A0E] text-[#D4AF37] text-xs font-bold uppercase tracking-widest rounded-full hover:bg-[#D4AF37] hover:text-[#2C1A0E] transition-all duration-200"
                   >
                     Ver Catálogo
                   </Link>
@@ -185,7 +185,7 @@ export default function CartDrawer() {
                 <Link
                   href="/checkout"
                   onClick={closeCart}
-                  className="flex items-center justify-center gap-2 w-full py-4 bg-[#D4AF37] hover:bg-[#C8A030] text-[#2C1A0E] font-bold text-sm uppercase tracking-widest rounded-sm transition-all duration-200 shadow-md"
+                  className="flex items-center justify-center gap-2 w-full py-4 bg-[#D4AF37] hover:bg-[#C8A030] text-[#2C1A0E] font-bold text-sm uppercase tracking-widest rounded-full transition-all duration-200 shadow-md"
                 >
                   Finalizar Compra
                   <ArrowRight className="w-4 h-4" />

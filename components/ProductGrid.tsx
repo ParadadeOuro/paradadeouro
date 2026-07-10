@@ -7,14 +7,14 @@ import Link from "next/link";
 import { buildCsvUrl, parseCatalogueProducts, CatalogueProduct } from "@/lib/catalogueParser";
 
 const tabs = [
-  { id: "chapeus", name: "Chapéus" },
-  { id: "botas", name: "Botas" },
-  { id: "cintos", name: "Cintos" },
   { id: "camisas-denim", name: "Camisas & Denim" },
+  { id: "canecas", name: "Canecas" },
+  { id: "botas", name: "Botas" },
+  { id: "chapeus", name: "Chapéus" },
+  { id: "cintos", name: "Cintos" },
   { id: "bones", name: "Bonés" },
   { id: "fivelas", name: "Fivelas" },
   { id: "churrasco", name: "Cutelaria" },
-  { id: "canecas", name: "Canecas" },
 ];
 
 const fallbackProducts: Record<string, Partial<CatalogueProduct>[]> = {
@@ -98,7 +98,7 @@ const mapProductToCategory = (type: string, tags: string = "", title: string = "
 };
 
 export default function ProductGrid() {
-  const [activeCategory, setActiveCategory] = useState("chapeus");
+  const [activeCategory, setActiveCategory] = useState("camisas-denim");
   const [productsByCategory, setProductsByCategory] = useState<Record<string, CatalogueProduct[]>>({
     chapeus: [],
     botas: [],
@@ -162,7 +162,7 @@ export default function ProductGrid() {
     : (fallbackProducts[activeCategory] || []) as CatalogueProduct[];
 
   return (
-    <section id="vitrine" className="py-32 md:py-40 bg-brand-brown text-brand-offwhite overflow-hidden">
+    <section id="vitrine" className="py-16 md:py-24 bg-brand-brown text-brand-offwhite overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
         
         {/* Header Section */}
@@ -192,7 +192,7 @@ export default function ProductGrid() {
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id)}
-                className={`px-6 py-3 text-xs font-bold uppercase tracking-widest rounded-sm border transition-all duration-300 cursor-pointer ${
+                className={`px-6 py-3 text-xs font-bold uppercase tracking-widest rounded-full border transition-all duration-300 cursor-pointer ${
                   isActive
                     ? "bg-brand-gold text-brand-brown border-brand-gold shadow-md scale-105"
                     : "border-brand-gold/30 text-brand-offwhite hover:border-brand-gold hover:text-brand-gold"
@@ -216,7 +216,7 @@ export default function ProductGrid() {
         {!loading && (
           <motion.div 
             layout 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[400px]"
           >
             <AnimatePresence mode="popLayout">
               {displayProducts.map((product) => {
@@ -265,9 +265,12 @@ export default function ProductGrid() {
                             Estilo Western
                           </span>
                         ) : hasDiscount && (
-                          <span className="px-3 py-1 bg-brand-gold/90 text-brand-brown text-[10px] font-bold tracking-wider uppercase rounded-sm backdrop-blur-xs">
-                            -{discountPct}%
-                          </span>
+                          <div className="relative w-14 h-14 flex items-center justify-center">
+                            <img src="/images/discount.png" alt="Desconto" className="absolute inset-0 w-full h-full animate-[spin_8s_linear_infinite]" />
+                            <span className="relative z-10 text-white text-[13px] font-black tracking-widest drop-shadow-md">
+                              -{discountPct}%
+                            </span>
+                          </div>
                         )}
                       </div>
 
@@ -275,7 +278,7 @@ export default function ProductGrid() {
                       <div className="absolute bottom-4 left-4 right-4 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
                         <Link 
                           href={isFallback ? `/catalogue?category=${activeCategory}` : `/product/${product.handle}`} 
-                          className="w-full py-3 bg-brand-gold hover:bg-brand-tan text-brand-brown text-xs font-bold tracking-widest uppercase rounded-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                          className="w-full py-3 bg-brand-gold hover:bg-brand-tan text-brand-brown text-xs font-bold tracking-widest uppercase rounded-full shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
                           <ShoppingBag className="w-4 h-4" />
                           {isFallback ? "Ver no Catálogo" : "Comprar Agora"}
@@ -322,7 +325,7 @@ export default function ProductGrid() {
             <p className="text-red-400 mb-4">Não foi possível carregar os produtos desta vitrine.</p>
             <button
               onClick={fetchProducts}
-              className="px-6 py-2.5 bg-brand-gold text-brand-brown text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-brand-tan transition-colors"
+              className="px-6 py-2.5 bg-brand-gold text-brand-brown text-xs font-bold uppercase tracking-widest rounded-full hover:bg-brand-tan transition-colors"
             >
               Tentar Novamente
             </button>

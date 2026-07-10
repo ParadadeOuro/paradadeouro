@@ -57,7 +57,7 @@ export default function Newsletter() {
               />
               <button
                 type="submit"
-                className="px-6 py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown font-semibold tracking-widest text-xs uppercase rounded-sm shadow-lg transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
+                className="px-6 py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown font-semibold tracking-widest text-xs uppercase rounded-full shadow-lg transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
               >
                 Cadastrar
                 <Send className="w-3.5 h-3.5" />
