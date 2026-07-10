@@ -389,9 +389,9 @@ function ProductCard({ product }: { product: Product }) {
         )}
 
         {hasDiscount && (
-          <div className="absolute top-2 left-2 w-14 h-14 flex items-center justify-center">
+          <div className="absolute top-2 left-2 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center">
             <img src="/images/discount.png" alt="Desconto" className="absolute inset-0 w-full h-full animate-[spin_8s_linear_infinite]" />
-            <span className="relative z-10 text-white text-[13px] font-black tracking-widest drop-shadow-md">
+            <span className="relative z-10 text-white text-[10px] md:text-[13px] font-black tracking-widest drop-shadow-md">
               -{discountPct}%
             </span>
           </div>
