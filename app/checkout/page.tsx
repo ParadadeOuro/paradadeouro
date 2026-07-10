@@ -271,43 +271,51 @@ export default function CheckoutPage() {
     try {
       const cpfDigits = form.cpf.replace(/\D/g, '');
       const phoneDigitsClean = form.phone.replace(/\D/g, '');
+      const externalRef = crypto.randomUUID();
 
-      const { data, error } = await checkoutSupabase.functions.invoke('create-pix', {
-        body: {
-          amount: finalTotal,
-          customer: {
+      const response = await fetch('/api/checkout/create-pix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Math.round(finalTotal * 100),
+          description: "Pedido Parada de Ouro",
+          externalRef,
+          payer: {
             name: form.name,
             email: form.email,
             phone: phoneDigitsClean,
-            document: {
-              number: cpfDigits,
-              type: cpfDigits.length === 11 ? 'cpf' : 'cnpj',
-            },
+            taxId: cpfDigits,
           },
           items: items.map((i) => ({
-            id: i.id,
-            title: i.title,
+            name: i.title,
             quantity: i.quantity,
+            price: Math.round(i.price * 100),
+            type: "PHYSICAL",
           })),
-          shippingMethod,
-          tiktok: {
-            addPaymentInfoEventId,
-            purchaseEventId,
-            user: tiktokUser,
-            properties: {
-              contents: tiktokContents,
-              content_ids: tiktokContentIds,
-              content_type: 'product',
-              value: finalTotal,
-              currency: 'BRL',
-            },
-            page: {
-              url: window.location.href,
-              user_agent: navigator.userAgent,
-            },
-          },
-        },
+          delivery: {
+            fee: Math.round(shippingCost * 100),
+            address: {
+              line1: form.address,
+              city: form.city,
+              state: form.state,
+              zipCode: form.cep.replace(/\D/g, ''),
+              country: "BR"
+            }
+          }
+        }),
       });
+
+      let data: any = null;
+      let error: any = null;
+
+      try {
+        data = await response.json();
+        if (!response.ok) {
+          error = { message: data.error || 'Erro ao gerar PIX' };
+        }
+      } catch (err) {
+        error = { message: 'Erro ao conectar com a API de pagamento' };
+      }
 
       if (error) throw new Error(error.message || 'Erro ao gerar PIX');
       if (data?.error) {

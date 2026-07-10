@@ -5,13 +5,13 @@ import { ArrowUpRight } from "lucide-react";
 
 export default function BrandStory() {
   return (
-    <section id="nossa-história" className="py-24 bg-brand-offwhite text-brand-brown overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="nossa-história" className="py-32 md:py-40 bg-brand-offwhite text-brand-brown overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 
           {/* Text Content Area */}
-          <div className="lg:col-span-6 space-y-8">
-            <div className="space-y-3">
+          <div className="lg:col-span-6 space-y-8 reveal-on-scroll">
+            <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="h-[1px] w-6 bg-brand-tan" />
                 <span className="text-xs font-bold tracking-[0.2em] text-brand-tan uppercase">

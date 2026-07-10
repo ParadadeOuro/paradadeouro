@@ -63,3 +63,40 @@ body {
 .marquee-track:hover {
   animation-play-state: paused;
 }
+
+/* ── Animações Premium (Scroll Reveals) ────────────────────────── */
+
+/* Fallback class added via JS intersection observer */
+.reveal-fallback-hidden {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+}
+
+.reveal-fallback-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scroll-driven animations (Modern Browsers) */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes reveal-in {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .reveal-on-scroll {
+      animation: reveal-in auto linear forwards;
+      animation-timeline: view(block);
+      /* O efeito acontece nos 25% iniciais da entrada do elemento na tela */
+      animation-range: entry 5% cover 30%;
+    }
+  }
+}

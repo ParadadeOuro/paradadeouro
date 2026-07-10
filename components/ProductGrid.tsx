@@ -162,23 +162,23 @@ export default function ProductGrid() {
     : (fallbackProducts[activeCategory] || []) as CatalogueProduct[];
 
   return (
-    <section id="vitrine" className="py-24 bg-brand-brown text-brand-offwhite overflow-hidden">
+    <section id="vitrine" className="py-32 md:py-40 bg-brand-brown text-brand-offwhite overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-6 reveal-on-scroll">
           <div className="max-w-xl">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="h-[1px] w-6 bg-brand-gold" />
+            <div className="flex items-center gap-3 mb-4">
+              <span className="h-[1px] w-8 bg-brand-gold" />
               <span className="text-xs font-bold tracking-[0.2em] text-brand-gold uppercase">
                 Seleção da Casa
               </span>
-              <span className="h-[1px] w-6 bg-brand-gold" />
+              <span className="h-[1px] w-8 bg-brand-gold" />
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-brand-offwhite mb-4">
+            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-brand-offwhite mb-6">
               Peças em Destaque
             </h2>
-            <p className="text-sm text-brand-offwhite/60 font-light leading-relaxed">
+            <p className="text-base text-brand-offwhite/60 font-light leading-relaxed">
               Explore o melhor da moda country sertaneja de luxo, com produtos selecionados à mão pela Parada de Ouro.
             </p>
           </div>
@@ -243,10 +243,10 @@ export default function ProductGrid() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.3 }}
-                    className="group relative flex flex-col justify-between bg-[#2C1A0E]/40 border border-brand-gold/10 p-4 rounded-sm hover:border-brand-gold/30 transition-all duration-500 hover:shadow-2xl hover:shadow-black/40 h-full"
+                    className="group relative flex flex-col justify-between bg-[#2C1A0E]/40 border border-brand-gold/10 p-5 rounded-sm hover:border-brand-gold/30 transition-all duration-500 hover:shadow-2xl hover:shadow-black/40 h-full reveal-on-scroll"
                   >
                     {/* Product Image Area */}
-                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-brand-brown/50 mb-6">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-brand-brown/50 mb-8">
                       <Link href={isFallback ? `/catalogue` : `/product/${product.handle}`} className="absolute inset-0 z-0">
                         <div
                           className={`absolute inset-0 bg-cover transition-transform duration-700 ease-out group-hover:scale-105 ${

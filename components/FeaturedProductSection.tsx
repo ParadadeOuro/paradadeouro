@@ -176,12 +176,12 @@ export default function FeaturedProductSection() {
   };
 
   return (
-    <section className="py-24 bg-white text-[#2C1A0E] border-b border-[#E8E0D5]">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <section className="py-32 bg-white text-[#2C1A0E] border-b border-[#E8E0D5]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center reveal-on-scroll">
           
           {/* Left Column: Image Display */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <div className="relative aspect-square w-full max-w-lg mx-auto rounded-sm overflow-hidden bg-[#F8F5F0] shadow-md border border-[#E8E0D5]">
               <AnimatePresence mode="wait">
                 <motion.img

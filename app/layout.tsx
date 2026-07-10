@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cartStore";
 import CartDrawer from "@/components/CartDrawer";
+import ScrollRevealProvider from "@/components/ScrollRevealProvider";
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
 });
 
-const inter = Inter({
+const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -28,9 +29,10 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${playfair.variable} ${inter.variable} h-full antialiased scroll-smooth`}
+      className={`${fraunces.variable} ${outfit.variable} h-full antialiased scroll-smooth`}
     >
       <body className="min-h-full bg-[#F8F5F0] text-[#232323] font-sans flex flex-col">
+        <ScrollRevealProvider />
         <CartProvider>
           {children}
           <CartDrawer />
