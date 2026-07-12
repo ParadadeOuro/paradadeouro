@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (insertErr) {
       console.error("Error inserting order via create-order API:", insertErr);
-      return NextResponse.json({ error: "Erro ao salvar pedido." }, { status: 500 });
+      return NextResponse.json({ error: "Erro ao salvar pedido: " + insertErr.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, orderId: externalRef });
