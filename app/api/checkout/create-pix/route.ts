@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     const payload = {
       paymentMethod: "pix",
       amount: data.amount,
+      reference: data.externalRef,
       postbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://paradadeouro.com.br'}/api/webhooks/primecash`,
       customer: {
         name: data.payer?.name || "Cliente sem nome",
