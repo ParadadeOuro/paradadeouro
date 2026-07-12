@@ -95,7 +95,8 @@ export default function CheckoutPage() {
   // Card state
   const [card, setCard] = useState({ number: '', holder: '', exp: '', cvv: '' });
   const [installments, setInstallments] = useState(1);
-  const [cardLoading] = useState(false);
+  const [cardLoading, setCardLoading] = useState(false);
+  const [externalRef, setExternalRef] = useState<string>('');
 
   const stepNum = typeof currentStep === 'number' ? currentStep : 4;
 
@@ -466,18 +467,18 @@ export default function CheckoutPage() {
           })),
           amount: Math.round(finalTotal * 100), // in cents
           payer: {
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            document: user.cpf,
+            name: form.name,
+            email: form.email,
+            phone: form.phone.replace(/\D/g, ''),
+            document: form.cpf.replace(/\D/g, ''),
           },
           delivery: {
             fee: Math.round(shippingCost * 100),
             address: {
-              line1: `${user.address.street}, ${user.address.number}`,
-              city: user.address.city,
-              state: user.address.state,
-              zipCode: user.address.zipCode,
+              line1: `${form.address}, ${form.number}`,
+              city: form.city,
+              state: form.state,
+              zipCode: form.cep.replace(/\D/g, ''),
               country: 'BR'
             }
           },
@@ -503,9 +504,9 @@ export default function CheckoutPage() {
           externalRef: currentExternalRef,
           installments: installments,
           payer: {
-            name: user.name,
-            email: user.email,
-            document: user.cpf,
+            name: form.name,
+            email: form.email,
+            document: form.cpf.replace(/\D/g, ''),
           },
           items: items.map(i => ({
             title: i.title,
