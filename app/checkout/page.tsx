@@ -319,7 +319,11 @@ export default function CheckoutPage() {
     try {
       const cpfDigits = form.cpf.replace(/\D/g, '');
       const phoneDigitsClean = form.phone.replace(/\D/g, '');
-      const externalRef = crypto.randomUUID();
+      let currentExternalRef = externalRef;
+      if (!currentExternalRef) {
+        currentExternalRef = crypto.randomUUID();
+        setExternalRef(currentExternalRef);
+      }
 
       const response = await fetch('/api/checkout/create-pix', {
         method: 'POST',
@@ -327,7 +331,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           amount: Math.round(finalTotal * 100),
           description: "Pedido Parada de Ouro",
-          externalRef,
+          externalRef: currentExternalRef,
           payer: {
             name: form.name,
             email: form.email,
@@ -380,7 +384,7 @@ export default function CheckoutPage() {
 
       const utmParams = getUtmParams();
       const totalInCents = Math.round(finalTotal * 100);
-      const orderId = data.id || data.shortId || crypto.randomUUID();
+      const orderId = currentExternalRef;
       setCreatedOrderId(orderId);
 
       trackTikTokEvent(
