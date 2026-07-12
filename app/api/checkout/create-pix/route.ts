@@ -11,14 +11,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate and format document (cpf or cnpj)
-    const docDigits = data.payer?.document?.replace(/\D/g, '') || "00000000000";
+    // Frontend sends as taxId or document — accept both
+    const rawDoc = data.payer?.document || data.payer?.taxId || "00000000000";
+    const docDigits = rawDoc.replace(/\D/g, '');
     const docType = docDigits.length > 11 ? "cnpj" : "cpf";
 
     // Primecash V1 Payload expects camelCase
     const payload = {
       paymentMethod: "pix",
       amount: data.amount,
-      postbackUrl: `${process.env.CHECKOUT_REDIRECT_URL || 'https://paradadeouro.com'}/api/webhooks/primecash`,
+      postbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://paradadeouro.com.br'}/api/webhooks/primecash`,
       customer: {
         name: data.payer?.name || "Cliente sem nome",
         email: data.payer?.email || "email@desconhecido.com",
@@ -37,8 +39,8 @@ export async function POST(request: NextRequest) {
 
     const url = "https://api.primecashbrasil.com/v1/transactions";
 
-    // Encode secret key with ":x" as basic auth
-    const authHeader = `Basic ${Buffer.from(`${process.env.PRIMECASH_SECRET_KEY}:x`).toString('base64')}`;
+    // Encode API key with ":x" as basic auth
+    const authHeader = `Basic ${Buffer.from(`${apiKey}:x`).toString('base64')}`;
 
     console.log("Sending PIX request to Primecash API", {
       amount: data.amount,

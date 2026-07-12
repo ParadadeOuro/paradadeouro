@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "@/lib/cartStore";
 import CartDrawer from "@/components/CartDrawer";
 import ScrollRevealProvider from "@/components/ScrollRevealProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const sancreek = Sancreek({
   weight: "400",
@@ -38,6 +39,7 @@ export default function RootLayout({
           {children}
           <CartDrawer />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );

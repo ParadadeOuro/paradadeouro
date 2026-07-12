@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     const expMonth = expParts[0];
     const expYear = expParts[1]?.length === 2 ? `20${expParts[1]}` : expParts[1];
 
-    const docDigits = data.payer?.document?.replace(/\D/g, '') || "00000000000";
+    const rawDoc = data.payer?.document || data.payer?.taxId || "00000000000";
+    const docDigits = rawDoc.replace(/\D/g, '');
     const docType = docDigits.length > 11 ? "CNPJ" : "CPF";
 
     // Pagou.ai V2 Payload
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
       method: "credit_card",
       amount: data.amount,
       installments: installments || 1,
-      postback_url: `${process.env.CHECKOUT_REDIRECT_URL || 'https://paradadeouro.com'}/api/webhooks/pagouai`,
+      postback_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://paradadeouro.com.br'}/api/webhooks/pagouai`,
       buyer: {
         name: data.payer?.name || "Cliente sem nome",
         email: data.payer?.email || "email@desconhecido.com",
