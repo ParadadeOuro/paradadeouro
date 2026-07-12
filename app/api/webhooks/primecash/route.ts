@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
-// Note: In a real app we'd use service role key for admin updates, but for now we'll use the anon key if RLS allows it, or we should use service key if available. We will assume anon key works for this simple store or RLS is disabled for updates on status.
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (status === 'paid' || status === 'approved' || status === 'completed') {
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from('orders')
         .update({ status: 'paid' })
         .eq('external_id', externalRef);

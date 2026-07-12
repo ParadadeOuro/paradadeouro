@@ -401,41 +401,38 @@ export default function CheckoutPage() {
         { eventId: purchaseEventId }
       );
 
-      const orderItems = items.map((i) => ({
-        id: i.id,
-        name: i.title,
-        quantity: i.quantity,
-        priceInCents: Math.round(i.price * 100),
-      }));
-
-      checkoutSupabase
-        .from('orders')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .insert({
-          external_id: orderId,
-          status: 'waiting_payment',
-          payment_method: 'pix',
-          customer_name: form.name,
-          customer_email: form.email,
-          customer_phone: phoneDigitsClean,
-          customer_document: cpfDigits,
-          total_cents: totalInCents,
-          items: orderItems as never,
-          utm_params: utmParams as never,
-          pix_id: data.id || null,
-          shipping_address: {
-            cep: form.cep,
-            address: form.address,
-            number: form.number,
-            neighborhood: form.neighborhood,
-            complement: form.complement,
-            city: form.city,
-            state: form.state,
-          } as never,
-        } as never)
-        .then(({ error: insertErr }) => {
-          if (insertErr) console.error('Error saving order:', insertErr);
-        });
+      await fetch('/api/checkout/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          externalRef: currentExternalRef,
+          items: items.map(item => ({
+            id: item.id,
+            title: item.title,
+            quantity: item.quantity,
+            price: item.price,
+            options: item.selectedOptions
+          })),
+          amount: Math.round(finalTotal * 100),
+          payer: {
+            name: form.name,
+            email: form.email,
+            phone: phoneDigitsClean,
+            document: cpfDigits,
+          },
+          delivery: {
+            fee: Math.round(shippingCost * 100),
+            address: {
+              line1: `${form.address}, ${form.number}`,
+              city: form.city,
+              state: form.state,
+              zipCode: form.cep.replace(/\D/g, ''),
+              country: 'BR'
+            }
+          },
+          paymentMethod: 'pix'
+        })
+      });
 
       checkoutSupabase.functions
         .invoke('track-utmify', {

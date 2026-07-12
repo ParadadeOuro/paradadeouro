@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkoutSupabase } from "@/lib/checkoutSupabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       priceInCents: Math.round(i.price * 100)
     }));
 
-    const { error: insertErr } = await checkoutSupabase
+    const { error: insertErr } = await supabaseAdmin
       .from("orders")
       .insert({
         external_id: externalRef,
