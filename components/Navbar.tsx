@@ -134,13 +134,13 @@ export default function Navbar() {
                 </span>
               )}
             </button>
-            <a
-              href="#coleções"
+            <Link
+              href={count > 0 ? "/checkout" : "/catalogue"}
               className="px-6 py-2.5 bg-brand-gold hover:bg-brand-tan text-brand-brown font-medium text-xs tracking-widest uppercase rounded-full shadow-sm transition-all duration-300 flex items-center gap-2"
             >
               Comprar
               <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -243,14 +243,14 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col space-y-6">
-              <a
-                href="#coleções"
+              <Link
+                href={count > 0 ? "/checkout" : "/catalogue"}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full py-4 bg-brand-gold hover:bg-brand-tan text-brand-brown text-center font-bold tracking-widest uppercase rounded-full shadow-md transition-all flex items-center justify-center gap-2"
               >
-                Explorar Coleção
+                Comprar
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}

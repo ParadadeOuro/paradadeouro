@@ -10,10 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Configuração de pagamento ausente" }, { status: 500 });
     }
 
-    const { card, installments, ...rest } = data;
-    const expParts = card.exp.split('/');
-    const expMonth = expParts[0];
-    const expYear = expParts[1]?.length === 2 ? `20${expParts[1]}` : expParts[1];
+    const { token, installments, ...rest } = data;
 
     const rawDoc = data.payer?.document || data.payer?.taxId || "00000000000";
     const docDigits = rawDoc.replace(/\D/g, '');
@@ -24,6 +21,7 @@ export async function POST(request: NextRequest) {
       method: "credit_card",
       amount: data.amount,
       installments: installments || 1,
+      token: token,
       postback_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://paradadeouro.com.br'}/api/webhooks/pagouai`,
       buyer: {
         name: data.payer?.name || "Cliente sem nome",
@@ -37,14 +35,7 @@ export async function POST(request: NextRequest) {
         name: i.title,
         quantity: i.quantity,
         price: i.unit_price || i.unitPrice || 0,
-      })) || [],
-      credit_card: {
-        number: card.number.replace(/\D/g, ''),
-        holder_name: card.holder,
-        exp_month: expMonth,
-        exp_year: expYear,
-        cvv: card.cvv
-      }
+      })) || []
     };
 
     const res = await fetch("https://api.pagou.ai/v2/transactions", {

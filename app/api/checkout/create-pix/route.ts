@@ -30,9 +30,9 @@ export async function POST(request: NextRequest) {
         }
       },
       items: data.items?.map((i: any) => ({
-        title: i.title,
+        title: i.title || i.name || "Item genérico",
         quantity: i.quantity,
-        unitPrice: i.unit_price || i.unitPrice || 0,
+        unitPrice: i.unitPrice || i.unit_price || i.price || 0,
         tangible: true
       })) || []
     };

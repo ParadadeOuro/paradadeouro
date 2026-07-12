@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Script from 'next/script';
 import { useCart } from '@/lib/cartStore';
 import {
   ChevronLeft,
@@ -93,10 +94,56 @@ export default function CheckoutPage() {
   }, [currentStep, createdOrderId, clearCart, router]);
 
   // Card state
-  const [card, setCard] = useState({ number: '', holder: '', exp: '', cvv: '' });
+  const [pagouElements, setPagouElements] = useState<any>(null);
   const [installments, setInstallments] = useState(1);
   const [cardLoading, setCardLoading] = useState(false);
   const [externalRef, setExternalRef] = useState<string>('');
+
+  useEffect(() => {
+    if (currentStep === 3 && paymentMethod === 'card' && !pagouElements && typeof window !== 'undefined') {
+      const initPagou = () => {
+        // @ts-ignore
+        if (!window.Pagou) return;
+        
+        const pk = process.env.NEXT_PUBLIC_PAGOUAI_PUBLIC_KEY;
+        
+        if (!pk || pk === "COLOQUE_SUA_CHAVE_PUBLICA_AQUI") {
+          console.warn("Chave pública da Pagou.ai não configurada.");
+          toast.error("Configuração de pagamento incompleta (Chave Pública ausente).");
+          return;
+        }
+
+        try {
+          // @ts-ignore
+          const elements = window.Pagou.elements({
+            publicKey: pk,
+            locale: "pt-BR",
+            origin: window.location.origin,
+          });
+          
+          const cardElement = elements.create("card", { theme: "default" });
+          cardElement.mount("#card-element");
+          setPagouElements(elements);
+        } catch (e) {
+          console.error("Erro ao inicializar Pagou SDK:", e);
+        }
+      };
+
+      // @ts-ignore
+      if (window.Pagou) {
+        initPagou();
+      } else {
+        const interval = setInterval(() => {
+          // @ts-ignore
+          if (window.Pagou) {
+            initPagou();
+            clearInterval(interval);
+          }
+        }, 500);
+        return () => clearInterval(interval);
+      }
+    }
+  }, [currentStep, paymentMethod, pagouElements]);
 
   const stepNum = typeof currentStep === 'number' ? currentStep : 4;
 
@@ -420,25 +467,9 @@ export default function CheckoutPage() {
     }
   };
 
-  const formatCardNumber = (v: string) =>
-    v.replace(/\D/g, '').slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 ');
-
-  const formatExp = (v: string) => {
-    const d = v.replace(/\D/g, '').slice(0, 4);
-    if (d.length <= 2) return d;
-    return `${d.slice(0, 2)}/${d.slice(2)}`;
-  };
-
-  const cardNumberDigits = card.number.replace(/\s/g, '');
-  const cardValid =
-    cardNumberDigits.length >= 13 &&
-    card.holder.trim().split(' ').length >= 2 &&
-    /^\d{2}\/\d{2,4}$/.test(card.exp) &&
-    card.cvv.length >= 3;
-
   const handleCardPayment = async () => {
-    if (!cardValid) {
-      toast.error('Preencha os dados do cartão corretamente.');
+    if (!pagouElements) {
+      toast.error('Pagamento indisponível. Verifique as configurações (chave pública).');
       return;
     }
     
@@ -495,38 +526,39 @@ export default function CheckoutPage() {
       const dbOrderId = orderData.orderId;
       setCreatedOrderId(dbOrderId);
       
-      // 2. Call our create-card api
-      const paymentRes = await fetch('/api/checkout/create-card', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: Math.round(finalTotal * 100),
-          externalRef: currentExternalRef,
-          installments: installments,
-          payer: {
-            name: form.name,
-            email: form.email,
-            document: form.cpf.replace(/\D/g, ''),
-          },
-          items: items.map(i => ({
-            title: i.title,
-            quantity: i.quantity,
-            unit_price: Math.round(i.price * 100)
-          })),
-          card: {
-            number: card.number,
-            holder: card.holder,
-            exp: card.exp,
-            cvv: card.cvv
+      // 2. Submit via Pagou Elements SDK to tokenize and call our API
+      const result = await pagouElements.submit({
+        createTransaction: async (tokenData: any) => {
+          const paymentRes = await fetch('/api/checkout/create-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: Math.round(finalTotal * 100),
+              externalRef: currentExternalRef,
+              installments: installments,
+              payer: {
+                name: form.name,
+                email: form.email,
+                document: form.cpf.replace(/\D/g, ''),
+              },
+              items: items.map(i => ({
+                title: i.title,
+                quantity: i.quantity,
+                unit_price: Math.round(i.price * 100)
+              })),
+              token: tokenData.token
+            })
+          });
+          
+          const paymentData = await paymentRes.json();
+          
+          if (!paymentRes.ok) {
+            throw new Error(paymentData.error || 'Erro ao processar cartão.');
           }
-        })
+          
+          return paymentData.data ?? paymentData;
+        }
       });
-      
-      const paymentData = await paymentRes.json();
-      
-      if (!paymentRes.ok) {
-        throw new Error(paymentData.error || 'Erro ao processar cartão.');
-      }
       
       // Clear cart
       clearCart();
@@ -535,7 +567,7 @@ export default function CheckoutPage() {
       
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || 'Erro inesperado.');
+      toast.error(err.message || 'Erro inesperado ao processar cartão.');
     } finally {
       setCardLoading(false);
     }
@@ -566,6 +598,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-brand-offwhite text-brand-charcoal flex flex-col font-sans animate-in fade-in duration-500">
+      <Script src="https://js.pagou.ai/payments/v3.js" strategy="lazyOnload" />
       <Toaster richColors position="top-right" />
 
       {/* Header */}
@@ -1022,68 +1055,7 @@ export default function CheckoutPage() {
                   {paymentMethod === 'card' && (
                     <>
                       <div className="border border-brand-tan/15 rounded-sm p-5 space-y-4">
-                        <div>
-                          <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">
-                            Número do cartão
-                          </label>
-                          <input
-                            value={card.number}
-                            onChange={(e) =>
-                              setCard((c) => ({
-                                ...c,
-                                number: formatCardNumber(e.target.value),
-                              }))
-                            }
-                            placeholder="0000 0000 0000 0000"
-                            inputMode="numeric"
-                            className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">
-                            Nome impresso no cartão
-                          </label>
-                          <input
-                            value={card.holder}
-                            onChange={(e) =>
-                              setCard((c) => ({
-                                ...c,
-                                holder: e.target.value.toUpperCase(),
-                              }))
-                            }
-                            placeholder="COMO ESTÁ NO CARTÃO"
-                            className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">Validade</label>
-                            <input
-                              value={card.exp}
-                              onChange={(e) =>
-                                setCard((c) => ({ ...c, exp: formatExp(e.target.value) }))
-                              }
-                              placeholder="MM/AA"
-                              inputMode="numeric"
-                              className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">CVV</label>
-                            <input
-                              value={card.cvv}
-                              onChange={(e) =>
-                                setCard((c) => ({
-                                  ...c,
-                                  cvv: e.target.value.replace(/\D/g, '').slice(0, 4),
-                                }))
-                              }
-                              placeholder="000"
-                              inputMode="numeric"
-                              className="w-full border border-brand-tan/20 rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold bg-brand-offwhite/5 transition-all"
-                            />
-                          </div>
-                        </div>
+                        <div id="card-element" className="min-h-[60px] bg-white border border-brand-tan/20 rounded-sm p-3"></div>
                         <div>
                           <label className="block text-xs font-semibold text-brand-brown uppercase tracking-wider mb-1">Parcelamento</label>
                           <select
@@ -1112,7 +1084,7 @@ export default function CheckoutPage() {
 
                       <button
                         onClick={handleCardPayment}
-                        disabled={cardLoading || !cardValid}
+                        disabled={cardLoading || !pagouElements}
                         className="w-full py-4 rounded-sm text-brand-brown bg-brand-gold hover:bg-brand-tan font-extrabold text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-md mt-4"
                       >
                         {cardLoading ? (
