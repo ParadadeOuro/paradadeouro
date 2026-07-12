@@ -31,7 +31,7 @@ export default function Hero() {
           >
             <span className="h-[1px] w-8 bg-brand-gold" />
             <span className="text-xs lg:text-sm font-semibold tracking-[0.25em] text-brand-gold uppercase">
-              Parada de Ouro
+              A Melhor do Brasil
             </span>
           </motion.div>
 

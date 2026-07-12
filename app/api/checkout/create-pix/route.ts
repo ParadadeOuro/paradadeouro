@@ -10,29 +10,50 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Configuração de pagamento ausente" }, { status: 500 });
     }
 
-    // Primecash V2 Payload
+    // Validate and format document (cpf or cnpj)
+    const docDigits = data.payer?.document?.replace(/\D/g, '') || "00000000000";
+    const docType = docDigits.length > 11 ? "cnpj" : "cpf";
+
+    // Primecash V1 Payload expects camelCase
     const payload = {
-      payment_method: "pix",
+      paymentMethod: "pix",
       amount: data.amount,
-      postback_url: `${process.env.CHECKOUT_REDIRECT_URL || 'https://paradadeouro.com'}/api/webhooks/primecash`,
+      postbackUrl: `${process.env.CHECKOUT_REDIRECT_URL || 'https://paradadeouro.com'}/api/webhooks/primecash`,
       customer: {
         name: data.payer?.name || "Cliente sem nome",
         email: data.payer?.email || "email@desconhecido.com",
-        document: data.payer?.document?.replace(/\D/g, '') || "00000000000"
+        document: {
+          number: docDigits,
+          type: docType
+        }
       },
       items: data.items?.map((i: any) => ({
         title: i.title,
         quantity: i.quantity,
-        unit_price: i.unit_price,
+        unitPrice: i.unit_price || i.unitPrice || 0,
         tangible: true
       })) || []
     };
 
-    const res = await fetch("https://api.primecashbrasil.com/v2/transactions", {
+    const url = "https://api.primecashbrasil.com/v1/transactions";
+
+    // Encode secret key with ":x" as basic auth
+    const authHeader = `Basic ${Buffer.from(`${process.env.PRIMECASH_SECRET_KEY}:x`).toString('base64')}`;
+
+    console.log("Sending PIX request to Primecash API", {
+      amount: data.amount,
+      customer: {
+        name: data.payer?.name,
+        email: data.payer?.email,
+        document: data.payer?.document
+      }
+    });
+
+    const res = await fetch(url, {
       method: "POST",
-      headers: { 
-        Authorization: `Basic ${Buffer.from(apiKey + ':').toString('base64')}`,
-        "Content-Type": "application/json" 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": authHeader,
       },
       body: JSON.stringify(payload),
     });

@@ -80,7 +80,7 @@ export default function Footer() {
       <div className="border-t border-brand-offwhite/5 bg-black/35 py-8">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className="text-[10px] text-brand-offwhite/40 font-light">
-            © {new Date().getFullYear()} Parada de Ouro Ltda. CNPJ 00.000.000/0001-00. Todos os direitos reservados.
+            © {new Date().getFullYear()} Parada de Ouro Ltda. CNPJ 67.415.581/0001-01. Todos os direitos reservados.
           </p>
           
           {/* Payment methods / icons */}

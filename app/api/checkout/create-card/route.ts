@@ -15,24 +15,29 @@ export async function POST(request: NextRequest) {
     const expMonth = expParts[0];
     const expYear = expParts[1]?.length === 2 ? `20${expParts[1]}` : expParts[1];
 
-    // Pagou.ai Payload
+    const docDigits = data.payer?.document?.replace(/\D/g, '') || "00000000000";
+    const docType = docDigits.length > 11 ? "CNPJ" : "CPF";
+
+    // Pagou.ai V2 Payload
     const payload = {
-      payment_method: "credit_card",
+      method: "credit_card",
       amount: data.amount,
       installments: installments || 1,
       postback_url: `${process.env.CHECKOUT_REDIRECT_URL || 'https://paradadeouro.com'}/api/webhooks/pagouai`,
-      customer: {
+      buyer: {
         name: data.payer?.name || "Cliente sem nome",
         email: data.payer?.email || "email@desconhecido.com",
-        document: data.payer?.document?.replace(/\D/g, '') || "00000000000"
+        document: {
+          number: docDigits,
+          type: docType
+        }
       },
-      items: data.items?.map((i: any) => ({
-        title: i.title,
+      products: data.items?.map((i: any) => ({
+        name: i.title,
         quantity: i.quantity,
-        unit_price: i.unit_price,
-        tangible: true
+        price: i.unit_price || i.unitPrice || 0,
       })) || [],
-      card: {
+      credit_card: {
         number: card.number.replace(/\D/g, ''),
         holder_name: card.holder,
         exp_month: expMonth,
@@ -41,10 +46,10 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    const res = await fetch("https://api.pagou.ai/v1/transactions", {
+    const res = await fetch("https://api.pagou.ai/v2/transactions", {
       method: "POST",
       headers: { 
-        Authorization: `Basic ${Buffer.from(apiKey + ':').toString('base64')}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json" 
       },
       body: JSON.stringify(payload),
