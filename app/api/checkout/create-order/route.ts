@@ -20,21 +20,16 @@ export async function POST(request: NextRequest) {
     const { error: insertErr } = await supabaseAdmin
       .from("orders")
       .insert({
-        external_id: externalRef,
-        status: "waiting_payment",
-        payment_method: paymentMethod || "card",
-        customer_name: payer.name,
-        customer_email: payer.email,
-        customer_phone: payer.phone,
-        customer_document: payer.document,
-        total_cents: amount,
+        external_ref: externalRef,
+        status: "PENDING",
+        gateway: paymentMethod || "monetrix",
+        payer_name: payer.name,
+        payer_email: payer.email,
+        payer_phone: payer.phone,
+        payer_taxid: payer.document,
+        amount_cents: amount,
         items: orderItems,
-        shipping_address: {
-          cep: delivery?.address?.zipCode,
-          address: delivery?.address?.line1,
-          city: delivery?.address?.city,
-          state: delivery?.address?.state,
-        }
+        delivery: delivery || {}
       });
 
     if (insertErr) {

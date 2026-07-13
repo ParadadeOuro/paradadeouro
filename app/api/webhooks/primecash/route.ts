@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     if (status === 'paid' || status === 'approved' || status === 'completed') {
       const { error } = await supabaseAdmin
         .from('orders')
-        .update({ status: 'paid' })
-        .eq('external_id', externalRef);
+        .update({ status: 'PAID' })
+        .eq('external_ref', externalRef);
       
       if (error) {
         console.error("Supabase update error:", error);

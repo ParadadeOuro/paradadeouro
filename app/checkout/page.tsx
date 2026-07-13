@@ -80,9 +80,9 @@ export default function CheckoutPage() {
         const { data } = await checkoutSupabase
           .from('orders')
           .select('status')
-          .eq('external_id', createdOrderId)
+          .eq('external_ref', createdOrderId)
           .single();
-        if (data?.status === 'paid' || data?.status === 'approved') {
+        if (data?.status === 'PAID' || data?.status === 'approved') {
           clearCart();
           router.push(`/thank-you?orderId=${createdOrderId}`);
         }

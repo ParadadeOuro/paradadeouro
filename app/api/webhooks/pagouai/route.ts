@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,10 +14,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (status === 'paid' || status === 'approved' || status === 'completed') {
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from('orders')
-        .update({ status: 'paid' })
-        .eq('external_id', externalRef);
+        .update({ status: 'PAID' })
+        .eq('external_ref', externalRef);
       
       if (error) {
         console.error("Supabase update error:", error);
