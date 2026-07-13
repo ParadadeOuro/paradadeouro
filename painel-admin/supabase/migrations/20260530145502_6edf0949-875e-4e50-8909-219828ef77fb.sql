@@ -1,0 +1,3 @@
+UPDATE public.app_config
+SET value = E'Olá, {nome}! ⚽\n\nSeu pagamento foi aprovado com sucesso! ✅\n\n📦 *Pedido:* #{pedido}\n💰 *Valor:* {total}\n\nJá estamos preparando tudo com muito carinho aqui na *Gol Raiz*. Em breve seu pedido será despachado e você receberá o código de rastreio por aqui e no seu e-mail. 🚚\n\nObrigado por confiar na gente — bora vestir essa paixão! 💛💚\n\n_Equipe Gol Raiz_'
+WHERE key = 'order_confirmation_message';

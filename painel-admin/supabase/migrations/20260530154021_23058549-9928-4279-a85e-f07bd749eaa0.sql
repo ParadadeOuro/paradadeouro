@@ -1,0 +1,1 @@
+UPDATE public.app_config SET value='true', updated_at=now() WHERE key IN ('order_confirmation_enabled','pix_reminder_enabled','pix_reminder2_enabled');

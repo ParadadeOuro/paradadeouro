@@ -1,0 +1,1 @@
+ALTER TABLE public.cart_recovery ADD COLUMN IF NOT EXISTS recovery_link_clicked_at timestamptz;

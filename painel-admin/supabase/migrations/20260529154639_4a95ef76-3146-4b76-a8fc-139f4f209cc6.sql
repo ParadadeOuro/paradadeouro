@@ -1,0 +1,6 @@
+UPDATE public.orders SET pix_reminder_status='failed', pix_reminder_sent_at=NULL WHERE pix_reminder_sent_at IS NOT NULL AND pix_reminder_zapi_message_id IS NULL AND (pix_reminder_status IS NULL OR pix_reminder_status IN ('queued','pending','sent'));
+UPDATE public.orders SET pix_reminder2_status='failed', pix_reminder2_sent_at=NULL WHERE pix_reminder2_sent_at IS NOT NULL AND pix_reminder2_zapi_message_id IS NULL AND (pix_reminder2_status IS NULL OR pix_reminder2_status IN ('queued','pending','sent'));
+UPDATE public.orders SET confirmation_status='failed', confirmation_sent_at=NULL WHERE confirmation_sent_at IS NOT NULL AND confirmation_zapi_message_id IS NULL AND (confirmation_status IS NULL OR confirmation_status IN ('queued','pending','sent'));
+UPDATE public.cart_recovery SET status='failed', sent_at=NULL WHERE sent_at IS NOT NULL AND zapi_message_id IS NULL AND status IN ('queued','pending','sent');
+UPDATE public.cart_recovery SET stage2_status='failed', stage2_sent_at=NULL WHERE stage2_sent_at IS NOT NULL AND stage2_zapi_message_id IS NULL AND (stage2_status IS NULL OR stage2_status IN ('queued','pending','sent'));
+UPDATE public.cart_recovery SET stage3_status='failed', stage3_sent_at=NULL WHERE stage3_sent_at IS NOT NULL AND stage3_zapi_message_id IS NULL AND (stage3_status IS NULL OR stage3_status IN ('queued','pending','sent'));

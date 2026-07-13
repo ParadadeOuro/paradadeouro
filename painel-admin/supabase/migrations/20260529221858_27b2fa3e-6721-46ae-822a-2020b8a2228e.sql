@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_blocked_ips_ip_address ON public.blocked_ips (ip_address);
