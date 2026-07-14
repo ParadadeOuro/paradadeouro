@@ -248,11 +248,13 @@ export default function ProductGrid() {
                     {/* Product Image Area */}
                     <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-brand-brown/50 mb-8">
                       <Link href={isFallback ? `/catalogue` : `/product/${product.handle}`} className="absolute inset-0 z-0">
-                        <div
-                          className={`absolute inset-0 bg-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
-                            isCaneca ? "bg-top" : "bg-center"
+                        <img
+                          src={product.image}
+                          alt={product.title}
+                          loading="lazy"
+                          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
+                            isCaneca ? "object-top" : "object-center"
                           }`}
-                          style={{ backgroundImage: `url('${product.image}')` }}
                         />
                       </Link>
                       {/* Vignette overlay */}

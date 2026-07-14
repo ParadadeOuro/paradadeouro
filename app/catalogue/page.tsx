@@ -377,6 +377,7 @@ function ProductCard({ product }: { product: Product }) {
           <img
             src={product.image}
             alt={product.title}
+            loading="lazy"
             onError={() => setImgError(true)}
             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isCaneca ? "object-top" : "object-center"}`}
           />

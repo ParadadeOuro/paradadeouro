@@ -12,6 +12,8 @@ export default function Hero() {
         muted
         loop
         playsInline
+        preload="none"
+        poster="/images/logo.png"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] hover:scale-105"
       >
         <source src="./herovideo.mp4" type="video/mp4" />

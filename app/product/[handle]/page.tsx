@@ -479,15 +479,15 @@ export default function ProductPage() {
         {/* Product layout */}
         <div className="max-w-7xl mx-auto px-6 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* ── Gallery ───────────────────────────────────────────────────── */}
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col-reverse lg:flex-row items-start gap-4">
             {/* Thumbnails */}
             {product.images.length > 1 && (
-              <div className="flex flex-col gap-2 w-16 shrink-0">
+              <div className="flex lg:flex-col gap-2 w-full lg:w-16 shrink-0 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
                 {product.images.map((src, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className={`w-16 h-16 rounded-sm overflow-hidden border-2 transition-all duration-200 ${
+                    className={`w-16 h-16 shrink-0 rounded-sm overflow-hidden border-2 transition-all duration-200 ${
                       activeImage === i
                         ? "border-[#D4AF37]"
                         : "border-transparent opacity-60 hover:opacity-100"
@@ -497,6 +497,7 @@ export default function ProductPage() {
                     <img 
                       src={src} 
                       alt={`View ${i + 1}`} 
+                      loading="lazy"
                       className={`w-full h-full object-cover ${isCaneca ? "object-top" : "object-center"}`} 
                     />
                   </button>
