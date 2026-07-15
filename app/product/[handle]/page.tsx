@@ -462,7 +462,7 @@ export default function ProductPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F8F5F0]">
-      <Navbar />
+      <Navbar forceOpaque />
 
       <main className="flex-grow pt-24">
         {/* Breadcrumb */}
@@ -544,12 +544,26 @@ export default function ProductPage() {
                 {product.title}
               </h1>
 
-              {/* Stars (decorative) */}
-              <div className="flex items-center gap-1 mt-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
-                ))}
-                <span className="text-[#A89070] text-xs ml-1">(Premium)</span>
+              {/* Stars & Jump Link */}
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
+                  ))}
+                  <span className="text-[#A89070] text-xs ml-1 font-semibold">4.9 (128 avaliações)</span>
+                </div>
+                
+                {product.bodyHtml && (
+                  <>
+                    <span className="text-[#E8E0D5] hidden sm:inline">|</span>
+                    <button 
+                      onClick={() => document.getElementById('descricao-produto')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="text-xs text-[#D4AF37] font-bold uppercase tracking-wider hover:text-[#C8A030] transition-colors flex items-center gap-1"
+                    >
+                      Ler descrição ↓
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -714,26 +728,47 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* ── Description (Shopify-Style Accordions) ─────────────────────── */}
+        {/* ── Rich Description Section ───────────────────────────────────── */}
+        {product.bodyHtml && (
+          <div id="descricao-produto" className="bg-[#F8F5F0] border-t border-[#E8E0D5] py-16 scroll-mt-24">
+            <div className="max-w-4xl mx-auto px-6 text-center">
+              <p className="text-[#D4AF37] text-sm uppercase tracking-widest font-bold mb-2">Exclusividade e Tradição</p>
+              <h2
+                className="font-display text-3xl md:text-4xl font-bold text-[#2C1A0E] mb-8"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Conheça os Detalhes
+              </h2>
+              
+              {/* This div will render the HTML directly from Shopify/CSV. 
+                  We use some basic styling to ensure it looks good. */}
+              <div 
+                className="prose prose-sm md:prose-base prose-p:text-[#6B4C2A] prose-p:leading-relaxed prose-headings:text-[#2C1A0E] mx-auto text-left"
+                dangerouslySetInnerHTML={{ __html: product.bodyHtml }}
+              />
+
+              {/* Mock space for an extra promotional image */}
+              <div className="mt-12 w-full h-64 md:h-96 bg-[#E8E0D5] rounded-sm flex flex-col items-center justify-center overflow-hidden relative group">
+                <div className="absolute inset-0 bg-brand-brown/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                <p className="text-[#A89070] text-sm uppercase tracking-widest z-0">Espaço para Imagem Descritiva</p>
+                {/* You can replace the src below with a real lifestyle image later */}
+                <img src={product.images[0]} alt="Lifestyle" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Specifications & Accordions ───────────────────────────────── */}
         <div className="bg-white border-t border-[#E8E0D5]">
           <div className="max-w-4xl mx-auto px-6 py-14">
             <h2
               className="font-display text-2xl font-bold text-[#2C1A0E] mb-6 tracking-wide"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Detalhes do Produto
+              Mais Informações
             </h2>
             
             <div className="mt-4 border-t border-[#E8E0D5]">
-              {product.bodyHtml && (
-                <AccordionItem
-                  title="Sobre o Produto"
-                  isOpen={openAccordion === "desc"}
-                  onToggle={() => setOpenAccordion(openAccordion === "desc" ? null : "desc")}
-                >
-                  {stripHtml(product.bodyHtml)}
-                </AccordionItem>
-              )}
               
               <AccordionItem
                 title="Especificações Técnicas"
@@ -776,6 +811,81 @@ export default function ProductPage() {
                 onToggle={() => setOpenAccordion(openAccordion === "care" ? null : "care")}
               >
                 {getCareAndWarranty(product.handle, product.title)}
+              </AccordionItem>
+
+              <AccordionItem
+                title="Avaliações de Clientes"
+                isOpen={openAccordion === "reviews"}
+                onToggle={() => setOpenAccordion(openAccordion === "reviews" ? null : "reviews")}
+              >
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-4 border-b border-[#E8E0D5]/50 pb-4">
+                    <div className="flex items-center gap-1">
+                      <span className="text-2xl font-bold text-[#2C1A0E]">4.9</span>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`w-4 h-4 ${i === 4 ? "text-[#D4AF37]/50 fill-[#D4AF37]/50" : "text-[#D4AF37] fill-[#D4AF37]"}`} />
+                        ))}
+                      </div>
+                    </div>
+                    <span className="text-xs text-[#A89070] uppercase tracking-wider">Baseado em 128 avaliações</span>
+                  </div>
+
+                  {/* Mock Review 1 */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#2C1A0E] text-sm">Carlos A.</span>
+                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
+                      </div>
+                      <span className="text-xs text-[#A89070]">há 2 dias</span>
+                    </div>
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
+                    </div>
+                    <p className="text-sm text-[#6B4C2A]">
+                      Produto excepcional! A qualidade do material me surpreendeu bastante. Comprei com um pouco de receio por ser a primeira vez, mas a entrega foi super rápida e o atendimento nota 10. Recomendo de olhos fechados.
+                    </p>
+                  </div>
+
+                  {/* Mock Review 2 */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#2C1A0E] text-sm">Felipe M.</span>
+                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
+                      </div>
+                      <span className="text-xs text-[#A89070]">há 1 semana</span>
+                    </div>
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
+                    </div>
+                    <p className="text-sm text-[#6B4C2A]">
+                      Excelente acabamento. Deu pra perceber que é feito com cuidado. A única coisa é que demorou 1 dia a mais do que o prazo estipulado pelos Correios, mas valeu a espera.
+                    </p>
+                  </div>
+
+                  {/* Mock Review 3 */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#2C1A0E] text-sm">Rodrigo S.</span>
+                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
+                      </div>
+                      <span className="text-xs text-[#A89070]">há 2 semanas</span>
+                    </div>
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
+                    </div>
+                    <p className="text-sm text-[#6B4C2A]">
+                      Comprei pra dar de presente pro meu pai e ele ficou apaixonado. A embalagem vem muito bem feita e o produto é de primeira linha mesmo. Parabéns à equipe!
+                    </p>
+                  </div>
+                  
+                  <button className="mt-2 text-sm text-[#D4AF37] font-semibold hover:text-[#C8A030] text-left underline">
+                    Ver todas as avaliações
+                  </button>
+                </div>
               </AccordionItem>
             </div>
           </div>

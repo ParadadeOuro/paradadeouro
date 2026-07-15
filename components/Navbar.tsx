@@ -19,7 +19,11 @@ const categories = [
   { name: "Canecas", id: "canecas" },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  forceOpaque?: boolean;
+}
+
+export default function Navbar({ forceOpaque = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -45,7 +49,7 @@ export default function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className={`fixed left-0 w-full z-50 transition-all duration-500 ${isScrolled
+        className={`fixed left-0 w-full z-50 transition-all duration-500 ${isScrolled || forceOpaque
             ? "bg-brand-brown/95 backdrop-blur-md py-4 shadow-lg border-b border-brand-tan/10 text-brand-offwhite top-[32px]"
             : "bg-gradient-to-b from-brand-brown/80 to-transparent py-6 text-brand-offwhite top-[32px]"
           }`}
