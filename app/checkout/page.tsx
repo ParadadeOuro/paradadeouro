@@ -16,7 +16,9 @@ import {
   Copy,
   Check,
   Loader2,
+  ShoppingBag,
 } from 'lucide-react';
+import { buildCsvUrl, parseCatalogueProducts, CatalogueProduct } from '@/lib/catalogueParser';
 import { checkoutSupabase } from '@/lib/checkoutSupabase';
 import { toast, Toaster } from 'sonner';
 import { getUtmParams } from '@/lib/utmUtils';
@@ -50,11 +52,42 @@ function calcInstallment(
 }
 
 export default function CheckoutPage() {
-  const { state, total, updateQuantity, clearCart } = useCart();
+  const { state, total, updateQuantity, clearCart, addItem } = useCart();
   const items = state.items;
   const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState<Step>(1);
+
+  // ── Order Bump: fetch 'Outros' products ────────────────────────────────
+  const [bumpProducts, setBumpProducts] = useState<CatalogueProduct[]>([]);
+  const [bumpAdded, setBumpAdded] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const url = buildCsvUrl();
+    if (!url) return;
+    fetch(url)
+      .then((r) => r.text())
+      .then((text) => {
+        const all = parseCatalogueProducts(text);
+        const outros = all
+          .filter((p) => p.type?.toLowerCase() === 'outros' && p.handle !== 'produto-teste-001')
+          .slice(0, 6);
+        setBumpProducts(outros);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleBumpAdd = (p: CatalogueProduct) => {
+    addItem({
+      handle: p.handle,
+      title: p.title,
+      image: p.image,
+      selectedOptions: {},
+      price: parseFloat(p.price) || 0,
+    });
+    setBumpAdded((prev) => ({ ...prev, [p.handle]: true }));
+    setTimeout(() => setBumpAdded((prev) => ({ ...prev, [p.handle]: false })), 2000);
+  };
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
 
   useEffect(() => {
@@ -1328,6 +1361,51 @@ export default function CheckoutPage() {
                   </div>
                 ))}
               </div>
+
+              {/* ── Order Bump ────────────────────────────────────── */}
+              {bumpProducts.length > 0 && (
+                <div className="mt-5 pt-4 border-t border-brand-tan/10">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-brand-tan mb-3">
+                    ✨ Você também pode gostar
+                  </p>
+                  <div className="space-y-2">
+                    {bumpProducts.map((p) => (
+                      <div
+                        key={p.handle}
+                        className="flex items-center gap-3 border border-brand-tan/10 rounded-sm p-2.5 bg-brand-offwhite/10 hover:bg-brand-offwhite/25 transition-all duration-200"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={p.image}
+                          alt={p.title}
+                          className="w-10 h-10 rounded-sm object-cover border border-brand-tan/10 shrink-0"
+                          loading="lazy"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-semibold text-brand-brown leading-tight truncate">{p.title}</p>
+                          <p className="text-[10px] text-brand-tan font-bold mt-0.5">
+                            {p.price ? `R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}` : ''}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleBumpAdd(p)}
+                          className={`shrink-0 flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-sm transition-all duration-200 cursor-pointer ${
+                            bumpAdded[p.handle]
+                              ? 'bg-brand-tan text-white'
+                              : 'bg-brand-gold text-brand-brown hover:bg-brand-tan hover:text-white'
+                          }`}
+                        >
+                          {bumpAdded[p.handle] ? (
+                            <><Check className="w-2.5 h-2.5" /> Adicionado</>
+                          ) : (
+                            <><ShoppingBag className="w-2.5 h-2.5" /> Add</>
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
