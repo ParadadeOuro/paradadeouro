@@ -38,7 +38,7 @@ async function run() {
   cols[7] = 'TRUE'; 
   cols[8] = 'Title'; 
   cols[9] = 'Default Title'; 
-  cols[23] = '1.00'; // CHANGED TO 1.00
+  cols[23] = '5.00'; // CHANGED TO 5.00
   cols[25] = 'TRUE'; 
   cols[32] = 'https://picsum.photos/400/400'; 
   cols[42] = 'active'; 
