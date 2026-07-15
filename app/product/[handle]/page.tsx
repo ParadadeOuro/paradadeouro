@@ -464,7 +464,7 @@ export default function ProductPage() {
     <div className="flex flex-col min-h-screen bg-[#F8F5F0]">
       <Navbar forceOpaque />
 
-      <main className="flex-grow pt-24">
+      <main className="flex-grow pt-32 lg:pt-40">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-6 py-4">
           <Link
