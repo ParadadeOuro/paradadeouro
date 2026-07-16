@@ -687,56 +687,6 @@ export default function CheckoutPage() {
         <div className="flex flex-col lg:flex-row gap-6 max-w-5xl mx-auto">
           {/* Left: Steps */}
           <div className="flex-1 space-y-4 order-2 lg:order-1">
-            {/* Barra de Progresso do Checkout */}
-            <div className="bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm mb-6">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-bold text-brand-brown uppercase tracking-wider">Progresso da Compra</span>
-                <span className="text-xs font-bold text-brand-gold">{completedSteps * 25}% concluído</span>
-              </div>
-              
-              <div className="relative flex items-center justify-between w-full">
-                {/* Linha de fundo */}
-                <div className="absolute left-[12.5%] right-[12.5%] top-4 h-0.5 bg-brand-offwhite border-b border-brand-tan/10 -translate-y-1/2 z-0" />
-                
-                {/* Linha ativa */}
-                <div 
-                  className="absolute left-[12.5%] top-4 h-0.5 bg-brand-gold -translate-y-1/2 z-0 transition-all duration-500 ease-in-out"
-                  style={{ width: `${(completedSteps - 1) * 25}%` }}
-                />
-
-                {[
-                  { label: "Produtos", num: 1 },
-                  { label: "Identificação", num: 2 },
-                  { label: "Entrega", num: 3 },
-                  { label: "Pagamento", num: 4 }
-                ].map((s) => {
-                  const isDone = completedSteps >= s.num;
-                  return (
-                    <div key={s.num} className="relative z-10 flex flex-col items-center flex-1">
-                      <div 
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300 ${
-                          isDone 
-                            ? "bg-brand-gold border-brand-gold text-brand-brown" 
-                            : "bg-white border-brand-tan/20 text-brand-charcoal/40"
-                        }`}
-                      >
-                        {isDone ? (
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
-                        ) : (
-                          <span>{s.num}</span>
-                        )}
-                      </div>
-                      <span className={`text-[9px] sm:text-[10px] uppercase font-bold tracking-wider mt-2 text-center transition-colors duration-300 ${
-                        isDone ? "text-brand-brown" : "text-brand-charcoal/40"
-                      }`}>
-                        {s.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Step 1: Identificação */}
             <div className={`bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm transition-opacity duration-300 ${currentStep !== 1 ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between mb-1">
@@ -1350,119 +1300,171 @@ export default function CheckoutPage() {
 
           {/* Right: Order Summary */}
           <div className="w-full lg:w-80 order-1 lg:order-2">
-            <div className="bg-white rounded-sm border border-brand-tan/15 p-6 sticky top-24 shadow-sm">
-              <h3 className="font-bold text-sm text-brand-brown uppercase tracking-wider mb-4">Resumo do pedido</h3>
+            <div className="sticky top-24 space-y-4">
+              <div className="bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm">
+                <h3 className="font-bold text-sm text-brand-brown uppercase tracking-wider mb-4">Resumo do pedido</h3>
 
-              <div className="space-y-3 text-xs text-brand-charcoal/80 border-b border-brand-tan/10 pb-4 mb-4 font-light">
-                <div className="flex justify-between">
-                  <span>Produtos</span>
-                  <span className="font-semibold text-brand-brown">{formatPrice(total)}</span>
+                <div className="space-y-3 text-xs text-brand-charcoal/80 border-b border-brand-tan/10 pb-4 mb-4 font-light">
+                  <div className="flex justify-between">
+                    <span>Produtos</span>
+                    <span className="font-semibold text-brand-brown">{formatPrice(total)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Frete ({shippingMethod === 'sedex' ? 'SEDEX' : 'PAC'})</span>
+                    <span className={shippingCost === 0 ? 'font-semibold text-brand-tan' : 'font-semibold text-brand-brown'}>
+                      {shippingCost === 0 ? 'Grátis' : formatPrice(shippingCost)}
+                    </span>
+                  </div>
+                  {pixDiscount > 0 && (
+                    <div className="flex justify-between text-brand-tan font-semibold">
+                      <span>Desconto Pix (5%)</span>
+                      <span>-{formatPrice(pixDiscount)}</span>
+                    </div>
+                  )}
                 </div>
-                <div className="flex justify-between">
-                  <span>Frete ({shippingMethod === 'sedex' ? 'SEDEX' : 'PAC'})</span>
-                  <span className={shippingCost === 0 ? 'font-semibold text-brand-tan' : 'font-semibold text-brand-brown'}>
-                    {shippingCost === 0 ? 'Grátis' : formatPrice(shippingCost)}
-                  </span>
+
+                <div className="flex justify-between font-bold text-base text-brand-brown mb-6">
+                  <span>Total</span>
+                  <span className="font-extrabold">{formatPrice(finalTotal)}</span>
                 </div>
-                {pixDiscount > 0 && (
-                  <div className="flex justify-between text-brand-tan font-semibold">
-                    <span>Desconto Pix (5%)</span>
-                    <span>-{formatPrice(pixDiscount)}</span>
+
+                {/* Cart items */}
+                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                  {items.map((item, i) => (
+                    <div key={i} className="flex gap-3 border border-brand-tan/10 rounded-sm p-3 bg-brand-offwhite/10 hover:bg-brand-offwhite/20 transition-all duration-300">
+                      {item.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-12 h-12 rounded-sm object-cover border border-brand-tan/10 shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-brand-brown leading-tight truncate">{item.title}</p>
+                        <p className="text-[10px] text-brand-charcoal/50 mt-0.5">
+                          {Object.values(item.selectedOptions).join(' / ')}
+                        </p>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-xs font-bold text-brand-brown">
+                            {formatPrice(item.price * item.quantity)}
+                          </span>
+                          <div className="flex items-center border border-brand-tan/20 rounded-sm bg-white overflow-hidden">
+                            <button
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              className="px-1.5 py-1 text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-offwhite transition-colors cursor-pointer animate-press"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="text-xs px-2 font-semibold text-brand-brown">{item.quantity}</span>
+                            <button
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              className="px-1.5 py-1 text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-offwhite transition-colors cursor-pointer animate-press"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ── Order Bump ────────────────────────────────────── */}
+                {bumpProducts.length > 0 && (
+                  <div className="mt-5 pt-4 border-t border-brand-tan/10">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-tan mb-3">
+                      ✨ Você também pode gostar
+                    </p>
+                    <div className="space-y-2">
+                      {bumpProducts.map((p) => (
+                        <div
+                          key={p.handle}
+                          className="flex items-center gap-3 border border-brand-tan/10 rounded-sm p-2.5 bg-brand-offwhite/10 hover:bg-brand-offwhite/25 transition-all duration-200"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={p.image}
+                            alt={p.title}
+                            className="w-10 h-10 rounded-sm object-cover border border-brand-tan/10 shrink-0"
+                            loading="lazy"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-semibold text-brand-brown leading-tight truncate">{p.title}</p>
+                            <p className="text-[10px] text-brand-tan font-bold mt-0.5">
+                              {p.price ? `R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}` : ''}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleBumpAdd(p)}
+                            className={`shrink-0 flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-sm transition-all duration-200 cursor-pointer ${
+                              bumpAdded[p.handle]
+                                ? 'bg-brand-tan text-white'
+                                : 'bg-brand-gold text-brand-brown hover:bg-brand-tan hover:text-white'
+                            }`}
+                          >
+                            {bumpAdded[p.handle] ? (
+                              <><Check className="w-2.5 h-2.5" /> Adicionado</>
+                            ) : (
+                              <><ShoppingBag className="w-2.5 h-2.5" /> Add</>
+                            )}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-between font-bold text-base text-brand-brown mb-6">
-                <span>Total</span>
-                <span className="font-extrabold">{formatPrice(finalTotal)}</span>
-              </div>
+              {/* Barra de Progresso do Checkout (Azul da Paleta) */}
+              <div className="bg-white rounded-sm border border-brand-tan/15 p-4 shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-[10px] font-bold text-brand-brown uppercase tracking-wider">Progresso da Compra</span>
+                  <span className="text-[10px] font-bold text-promo-babyblue">{completedSteps * 25}% concluído</span>
+                </div>
+                
+                <div className="relative flex items-center justify-between w-full">
+                  {/* Linha de fundo */}
+                  <div className="absolute left-[12.5%] right-[12.5%] top-3.5 h-0.5 bg-brand-offwhite border-b border-brand-tan/10 -translate-y-1/2 z-0" />
+                  
+                  {/* Linha ativa */}
+                  <div 
+                    className="absolute left-[12.5%] top-3.5 h-0.5 bg-promo-babyblue -translate-y-1/2 z-0 transition-all duration-500 ease-in-out"
+                    style={{ width: `${(completedSteps - 1) * 25}%` }}
+                  />
 
-              {/* Cart items */}
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                {items.map((item, i) => (
-                  <div key={i} className="flex gap-3 border border-brand-tan/10 rounded-sm p-3 bg-brand-offwhite/10 hover:bg-brand-offwhite/20 transition-all duration-300">
-                    {item.image && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-12 h-12 rounded-sm object-cover border border-brand-tan/10 shrink-0"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-brand-brown leading-tight truncate">{item.title}</p>
-                      <p className="text-[10px] text-brand-charcoal/50 mt-0.5">
-                        {Object.values(item.selectedOptions).join(' / ')}
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs font-bold text-brand-brown">
-                          {formatPrice(item.price * item.quantity)}
-                        </span>
-                        <div className="flex items-center border border-brand-tan/20 rounded-sm bg-white overflow-hidden">
-                          <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="px-1.5 py-1 text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-offwhite transition-colors cursor-pointer animate-press"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="text-xs px-2 font-semibold text-brand-brown">{item.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="px-1.5 py-1 text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-offwhite transition-colors cursor-pointer animate-press"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* ── Order Bump ────────────────────────────────────── */}
-              {bumpProducts.length > 0 && (
-                <div className="mt-5 pt-4 border-t border-brand-tan/10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-brand-tan mb-3">
-                    ✨ Você também pode gostar
-                  </p>
-                  <div className="space-y-2">
-                    {bumpProducts.map((p) => (
-                      <div
-                        key={p.handle}
-                        className="flex items-center gap-3 border border-brand-tan/10 rounded-sm p-2.5 bg-brand-offwhite/10 hover:bg-brand-offwhite/25 transition-all duration-200"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={p.image}
-                          alt={p.title}
-                          className="w-10 h-10 rounded-sm object-cover border border-brand-tan/10 shrink-0"
-                          loading="lazy"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[10px] font-semibold text-brand-brown leading-tight truncate">{p.title}</p>
-                          <p className="text-[10px] text-brand-tan font-bold mt-0.5">
-                            {p.price ? `R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}` : ''}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => handleBumpAdd(p)}
-                          className={`shrink-0 flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-sm transition-all duration-200 cursor-pointer ${
-                            bumpAdded[p.handle]
-                              ? 'bg-brand-tan text-white'
-                              : 'bg-brand-gold text-brand-brown hover:bg-brand-tan hover:text-white'
+                  {[
+                    { label: "Produtos", num: 1 },
+                    { label: "Identificação", num: 2 },
+                    { label: "Entrega", num: 3 },
+                    { label: "Pagamento", num: 4 }
+                  ].map((s) => {
+                    const isDone = completedSteps >= s.num;
+                    return (
+                      <div key={s.num} className="relative z-10 flex flex-col items-center flex-1">
+                        <div 
+                          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all duration-300 ${
+                            isDone 
+                              ? "bg-promo-babyblue border-promo-babyblue text-white" 
+                              : "bg-white border-brand-tan/20 text-brand-charcoal/40"
                           }`}
                         >
-                          {bumpAdded[p.handle] ? (
-                            <><Check className="w-2.5 h-2.5" /> Adicionado</>
+                          {isDone ? (
+                            <Check className="w-3.5 h-3.5 stroke-[3] text-white" />
                           ) : (
-                            <><ShoppingBag className="w-2.5 h-2.5" /> Add</>
+                            <span>{s.num}</span>
                           )}
-                        </button>
+                        </div>
+                        <span className={`text-[8px] sm:text-[9px] uppercase font-bold tracking-wider mt-1.5 text-center transition-colors duration-300 ${
+                          isDone ? "text-brand-brown" : "text-brand-charcoal/40"
+                        }`}>
+                          {s.label}
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
