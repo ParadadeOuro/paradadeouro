@@ -33,16 +33,19 @@ function ThankYouContent() {
 
         {orderId && (
           <p className="text-[10px] text-[#A89070] uppercase tracking-widest mb-8">
-            Número do pedido:{" "}
+            Protocolo de compra:{" "}
             <span className="text-[#D4AF37] font-bold">{orderId.slice(0, 8).toUpperCase()}</span>
           </p>
         )}
 
         <div className="space-y-3">
-          <div className="bg-[#F8F5F0] rounded-sm p-4 text-xs text-[#6B4C2A] space-y-1 text-left">
+          <div className="bg-[#F8F5F0] rounded-sm p-4 text-xs text-[#6B4C2A] space-y-2 text-left">
             <p>✓ Você receberá uma confirmação por e-mail em breve.</p>
             <p>✓ Seu pedido será enviado em até 3 dias úteis.</p>
-            <p>✓ Acompanhe pelo rastreamento enviado por e-mail.</p>
+            <div className="pt-2 mt-2 border-t border-[#E8E0D5]">
+              <p className="font-bold mb-1">Dúvidas sobre o envio?</p>
+              <p>Envie um e-mail para <strong>suporte@paradadeouro.com.br</strong> informando o protocolo de compra para acompanhar seu envio com nossa equipe.</p>
+            </div>
           </div>
 
           <Link
