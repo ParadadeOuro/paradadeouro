@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FeaturedProductSection from "@/components/FeaturedProductSection";
+import FeaturedProductBanner from "@/components/FeaturedProductBanner";
 import FeaturedCategories from "@/components/FeaturedCategories";
 import ProductGrid from "@/components/ProductGrid";
 import BrandStory from "@/components/BrandStory";
@@ -13,7 +13,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        {/* <FeaturedProductSection /> */}
+        <FeaturedProductBanner />
         <FeaturedCategories />
         <ProductGrid />
         <BrandStory />
