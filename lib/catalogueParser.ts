@@ -84,14 +84,20 @@ export function parseCatalogueProducts(text: string): CatalogueProduct[] {
     const price = cols[iPrice]?.trim();
     const compareAtPrice = cols[iCompare]?.trim();
 
+    const parsedPrice = price ? parseFloat(price.replace(",", ".")) : NaN;
+    const hasValidPrice = !isNaN(parsedPrice) && parsedPrice > 0;
+
     if (productMap.has(handle)) {
       const existing = productMap.get(handle)!;
       if (!existing.image && image) {
         existing.image = image;
       }
-      if (price && (!existing.price || parseFloat(price) < parseFloat(existing.price))) {
-        existing.price = price;
-        existing.compareAtPrice = compareAtPrice || existing.compareAtPrice;
+      if (hasValidPrice) {
+        const existingPrice = existing.price ? parseFloat(existing.price.replace(",", ".")) : NaN;
+        if (isNaN(existingPrice) || existingPrice <= 0 || parsedPrice < existingPrice) {
+          existing.price = price;
+          existing.compareAtPrice = compareAtPrice || existing.compareAtPrice;
+        }
       }
     } else {
       productMap.set(handle, {
@@ -100,8 +106,8 @@ export function parseCatalogueProducts(text: string): CatalogueProduct[] {
         type: cols[iType]?.trim() || "",
         vendor: cols[iVendor]?.trim() || "",
         tags: cols[iTags]?.trim() || "",
-        price: price || "",
-        compareAtPrice: compareAtPrice || "",
+        price: hasValidPrice ? price : "",
+        compareAtPrice: hasValidPrice ? (compareAtPrice || "") : "",
         image: image || "",
       });
     }
