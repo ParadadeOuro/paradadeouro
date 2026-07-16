@@ -27,7 +27,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex items-center justify-center gap-2 mb-4"
+            className="flex items-center justify-center gap-2 mb-8"
           >
             <span className="h-[1px] w-8 bg-brand-gold" />
             <span className="text-xs lg:text-sm font-semibold tracking-[0.25em] text-brand-gold uppercase">
@@ -40,7 +40,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8 flex justify-center w-full"
+            className="mb-12 mt-4 flex justify-center w-full"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
