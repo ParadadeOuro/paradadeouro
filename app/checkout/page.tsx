@@ -626,7 +626,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
+  if (items.length === 0 && currentStep !== 'card-success' && currentStep !== 'pix') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-brand-offwhite p-4">
         <p className="text-lg text-brand-charcoal/60 mb-4 font-sans font-light">Seu carrinho está vazio</p>
