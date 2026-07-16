@@ -5,6 +5,13 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-background: #FFFFFF;
+  --color-foreground: #0A0A0A;
+  --color-muted-foreground: #6B7280;
+  --color-border: #E5E7EB;
+  --color-accent: #F3F4F6;
+  --color-accent-foreground: #0A0A0A;
+  --color-ring: #FFCC00;
 }
 
 /* ─── Parada de Ouro — Design Tokens ─────────────────────────── */
