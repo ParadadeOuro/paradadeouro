@@ -1416,11 +1416,11 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              {/* Barra de Progresso do Checkout (Azul da Paleta) */}
+              {/* Barra de Progresso do Checkout (Vermelho da Paleta) */}
               <div className="bg-white rounded-sm border border-brand-tan/15 p-4 shadow-sm">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-[10px] font-bold text-brand-brown uppercase tracking-wider">Progresso da Compra</span>
-                  <span className="text-[10px] font-bold text-promo-babyblue">{completedSteps * 25}% concluído</span>
+                  <span className="text-[10px] font-bold text-promo-flame">{completedSteps * 25}% concluído</span>
                 </div>
                 
                 <div className="relative flex items-center justify-between w-full">
@@ -1429,7 +1429,7 @@ export default function CheckoutPage() {
                   
                   {/* Linha ativa */}
                   <div 
-                    className="absolute left-[12.5%] top-3.5 h-0.5 bg-promo-babyblue -translate-y-1/2 z-0 transition-all duration-500 ease-in-out"
+                    className="absolute left-[12.5%] top-3.5 h-0.5 bg-promo-flame -translate-y-1/2 z-0 transition-all duration-500 ease-in-out"
                     style={{ width: `${(completedSteps - 1) * 25}%` }}
                   />
 
@@ -1445,7 +1445,7 @@ export default function CheckoutPage() {
                         <div 
                           className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all duration-300 ${
                             isDone 
-                              ? "bg-promo-babyblue border-promo-babyblue text-white" 
+                              ? "bg-promo-flame border-promo-flame text-white" 
                               : "bg-white border-brand-tan/20 text-brand-charcoal/40"
                           }`}
                         >

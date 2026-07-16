@@ -17,29 +17,30 @@ export default function Hero() {
         <source src="./herovideo.mp4" type="video/mp4" />
       </video>
       {/* Dark overlay gradients for contrast and luxury feeling */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-brown/95 via-brand-brown/70 to-transparent md:bg-gradient-to-r" />
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-brown via-transparent to-brand-brown/40" />
+      <div className="absolute inset-0 bg-brand-brown/75 md:bg-brand-brown/65" />
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-brown via-transparent to-brand-brown/30" />
 
       {/* Hero Content */}
-      <div className="relative z-10 max-w-7xl w-full mx-auto px-6 lg:px-12 pt-[140px] pb-16 flex flex-col justify-center h-full min-h-screen">
-        <div className="max-w-2xl text-brand-offwhite">
+      <div className="relative z-10 max-w-7xl w-full mx-auto px-6 lg:px-12 pt-[140px] pb-16 flex flex-col items-center justify-center h-full min-h-screen text-center">
+        <div className="max-w-2xl text-brand-offwhite flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex items-center gap-2 mb-4"
+            className="flex items-center justify-center gap-2 mb-4"
           >
             <span className="h-[1px] w-8 bg-brand-gold" />
             <span className="text-xs lg:text-sm font-semibold tracking-[0.25em] text-brand-gold uppercase">
               A Melhor do Brasil
             </span>
+            <span className="h-[1px] w-8 bg-brand-gold" />
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8"
+            className="mb-8 flex justify-center w-full"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
@@ -53,7 +54,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-base sm:text-lg text-brand-offwhite/80 leading-relaxed font-sans font-light max-w-lg mb-10"
+            className="text-base sm:text-lg text-brand-offwhite/80 leading-relaxed font-sans font-light max-w-lg mb-10 text-center"
           >
             A elegância do campo em perfeita sintonia com a sofisticação urbana. Vestuário western de luxo, feito à mão para a nova geração do agronegócio brasileiro.
           </motion.p>
@@ -62,7 +63,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 mb-16"
+            className="flex flex-col sm:flex-row justify-center gap-4 mb-16 w-full"
           >
             <a
               href="/catalogue"
@@ -84,9 +85,9 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.8 }}
-            className="grid grid-cols-3 gap-6 pt-8 border-t border-brand-offwhite/10"
+            className="grid grid-cols-3 gap-6 pt-8 border-t border-brand-offwhite/10 w-full"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-3 justify-center">
               <div className="p-2 bg-brand-offwhite/5 rounded-full text-brand-gold">
                 <Gem className="w-5 h-5" />
               </div>
@@ -95,7 +96,7 @@ export default function Hero() {
                 <p className="text-[10px] text-brand-offwhite/60">Couro selecionado</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-3 justify-center">
               <div className="p-2 bg-brand-offwhite/5 rounded-full text-brand-gold">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -104,7 +105,7 @@ export default function Hero() {
                 <p className="text-[10px] text-brand-offwhite/60">Artesanal de luxo</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-3 justify-center">
               <div className="p-2 bg-brand-offwhite/5 rounded-full text-brand-gold">
                 <Compass className="w-5 h-5" />
               </div>
