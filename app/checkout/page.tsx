@@ -58,6 +58,13 @@ export default function CheckoutPage() {
 
   const [currentStep, setCurrentStep] = useState<Step>(1);
 
+  const completedSteps = useMemo(() => {
+    if (currentStep === 1) return 1;
+    if (currentStep === 2) return 2;
+    if (currentStep === 3) return 3;
+    return 4;
+  }, [currentStep]);
+
   // ── Order Bump: fetch 'Outros' products ────────────────────────────────
   const [bumpProducts, setBumpProducts] = useState<CatalogueProduct[]>([]);
   const [bumpAdded, setBumpAdded] = useState<Record<string, boolean>>({});
@@ -680,6 +687,56 @@ export default function CheckoutPage() {
         <div className="flex flex-col lg:flex-row gap-6 max-w-5xl mx-auto">
           {/* Left: Steps */}
           <div className="flex-1 space-y-4 order-2 lg:order-1">
+            {/* Barra de Progresso do Checkout */}
+            <div className="bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm mb-6">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-bold text-brand-brown uppercase tracking-wider">Progresso da Compra</span>
+                <span className="text-xs font-bold text-brand-gold">{completedSteps * 25}% concluído</span>
+              </div>
+              
+              <div className="relative flex items-center justify-between w-full">
+                {/* Linha de fundo */}
+                <div className="absolute left-[12.5%] right-[12.5%] top-4 h-0.5 bg-brand-offwhite border-b border-brand-tan/10 -translate-y-1/2 z-0" />
+                
+                {/* Linha ativa */}
+                <div 
+                  className="absolute left-[12.5%] top-4 h-0.5 bg-brand-gold -translate-y-1/2 z-0 transition-all duration-500 ease-in-out"
+                  style={{ width: `${(completedSteps - 1) * 25}%` }}
+                />
+
+                {[
+                  { label: "Produtos", num: 1 },
+                  { label: "Identificação", num: 2 },
+                  { label: "Entrega", num: 3 },
+                  { label: "Pagamento", num: 4 }
+                ].map((s) => {
+                  const isDone = completedSteps >= s.num;
+                  return (
+                    <div key={s.num} className="relative z-10 flex flex-col items-center flex-1">
+                      <div 
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300 ${
+                          isDone 
+                            ? "bg-brand-gold border-brand-gold text-brand-brown" 
+                            : "bg-white border-brand-tan/20 text-brand-charcoal/40"
+                        }`}
+                      >
+                        {isDone ? (
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        ) : (
+                          <span>{s.num}</span>
+                        )}
+                      </div>
+                      <span className={`text-[9px] sm:text-[10px] uppercase font-bold tracking-wider mt-2 text-center transition-colors duration-300 ${
+                        isDone ? "text-brand-brown" : "text-brand-charcoal/40"
+                      }`}>
+                        {s.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Step 1: Identificação */}
             <div className={`bg-white rounded-sm border border-brand-tan/15 p-6 shadow-sm transition-opacity duration-300 ${currentStep !== 1 ? 'opacity-60' : ''}`}>
               <div className="flex items-center justify-between mb-1">
