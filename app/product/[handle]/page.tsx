@@ -327,6 +327,7 @@ export default function ProductPage() {
   // Image Upload and Accordion States
   const [uploading, setUploading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [customText, setCustomText] = useState("");
   const [openAccordion, setOpenAccordion] = useState<string | null>("desc");
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -432,6 +433,9 @@ export default function ProductPage() {
     const cartOptions = { ...selectedOptions };
     if (uploadedImageUrl) {
       cartOptions["Imagem Personalizada"] = uploadedImageUrl;
+    }
+    if (customText.trim()) {
+      cartOptions["Texto Personalizado"] = customText.trim();
     }
 
     addItem({
@@ -646,58 +650,82 @@ export default function ProductPage() {
               );
             })}
 
-            {/* Custom Image Upload for Mugs */}
+            {/* Customization for Mugs */}
             {product.handle.includes("caneca") && (
-              <div className="pt-2 border-t border-[#E8E0D5]/60 mb-4">
-                <span className="text-xs uppercase tracking-widest text-[#6B4C2A] font-semibold block mb-2">
-                  Envie sua Foto ou Logomarca (Opcional):
-                </span>
-                
-                {uploadedImageUrl ? (
-                  <div className="flex items-center gap-3 p-3 bg-white border border-[#D4AF37]/40 rounded-sm">
-                    <img src={uploadedImageUrl} alt="Preview" className="w-12 h-12 object-cover rounded-sm border border-[#E8E0D5]" />
-                    <div className="flex-grow min-w-0">
-                      <p className="text-xs font-semibold text-[#2C1A0E] truncate">Imagem enviada com sucesso!</p>
-                      <button 
-                        type="button" 
-                        onClick={handleRemoveImage}
-                        className="text-[10px] text-red-500 hover:underline mt-0.5"
-                      >
-                        Remover imagem
-                      </button>
-                    </div>
-                  </div>
-                ) : (
+              <div className="pt-2 border-t border-[#E8E0D5]/60 mb-4 flex flex-col gap-4">
+                {/* Custom Text/Name Input */}
+                <div>
+                  <label htmlFor="custom-mug-text" className="text-xs uppercase tracking-widest text-[#6B4C2A] font-semibold block mb-2">
+                    Nome ou Texto Personalizado (Até 20 caracteres):
+                  </label>
                   <div className="relative">
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploading}
-                      className="hidden"
-                      id="product-image-upload"
+                      id="custom-mug-text"
+                      type="text"
+                      maxLength={20}
+                      value={customText}
+                      onChange={(e) => setCustomText(e.target.value.toUpperCase())}
+                      placeholder="Ex: DAVI, PAI, AMOR..."
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#C8B99A] rounded-sm text-[#2C1A0E] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all uppercase placeholder:normal-case font-medium"
                     />
-                    <label
-                      htmlFor="product-image-upload"
-                      className={`flex flex-col items-center justify-center border-2 border-dashed border-[#C8B99A] hover:border-[#D4AF37] rounded-sm p-4 cursor-pointer bg-white transition-all text-center ${
-                        uploading ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                    >
-                      {uploading ? (
-                        <>
-                          <div className="w-4 h-4 rounded-full border-2 border-[#D4AF37] border-t-transparent animate-spin mb-1.5" />
-                          <span className="text-xs text-[#A89070]">Enviando imagem...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-5 h-5 text-[#A89070] mb-1.5" />
-                          <span className="text-xs font-semibold text-[#6B4C2A]">Clique para enviar sua imagem</span>
-                          <span className="text-[10px] text-[#A89070] mt-0.5">PNG, JPG de até 5MB</span>
-                        </>
-                      )}
-                    </label>
+                    <span className="absolute right-3 top-2.5 text-[10px] text-[#A89070] font-bold">
+                      {customText.length}/20
+                    </span>
                   </div>
-                )}
+                </div>
+
+                {/* Custom Image Upload */}
+                <div>
+                  <span className="text-xs uppercase tracking-widest text-[#6B4C2A] font-semibold block mb-2">
+                    Envie sua Foto ou Logomarca (Opcional):
+                  </span>
+                  
+                  {uploadedImageUrl ? (
+                    <div className="flex items-center gap-3 p-3 bg-white border border-[#D4AF37]/40 rounded-sm">
+                      <img src={uploadedImageUrl} alt="Preview" className="w-12 h-12 object-cover rounded-sm border border-[#E8E0D5]" />
+                      <div className="flex-grow min-w-0">
+                        <p className="text-xs font-semibold text-[#2C1A0E] truncate">Imagem enviada com sucesso!</p>
+                        <button 
+                          type="button" 
+                          onClick={handleRemoveImage}
+                          className="text-[10px] text-red-500 hover:underline mt-0.5"
+                        >
+                          Remover imagem
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                        className="hidden"
+                        id="product-image-upload"
+                      />
+                      <label
+                        htmlFor="product-image-upload"
+                        className={`flex flex-col items-center justify-center border-2 border-dashed border-[#C8B99A] hover:border-[#D4AF37] rounded-sm p-4 cursor-pointer bg-white transition-all text-center ${
+                          uploading ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        {uploading ? (
+                          <>
+                            <div className="w-4 h-4 rounded-full border-2 border-[#D4AF37] border-t-transparent animate-spin mb-1.5" />
+                            <span className="text-xs text-[#A89070]">Enviando imagem...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-5 h-5 text-[#A89070] mb-1.5" />
+                            <span className="text-xs font-semibold text-[#6B4C2A]">Clique para enviar sua imagem</span>
+                            <span className="text-[10px] text-[#A89070] mt-0.5">PNG, JPG de até 5MB</span>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
