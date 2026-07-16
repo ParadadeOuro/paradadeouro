@@ -791,7 +791,7 @@ export default function ProductPage() {
         {/* ── Rich Description Section ───────────────────────────────────── */}
         {product.bodyHtml && (
           <div id="descricao-produto" className="bg-[#F8F5F0] border-t border-[#E8E0D5] py-16 scroll-mt-24">
-            <div className="max-w-4xl mx-auto px-6 text-center">
+            <div className="max-w-2xl mx-auto px-6 text-center">
               <p className="text-[#D4AF37] text-sm uppercase tracking-widest font-bold mb-2">Exclusividade e Tradição</p>
               <h2
                 className="font-display text-3xl md:text-4xl font-bold text-[#2C1A0E] mb-8"
@@ -803,7 +803,7 @@ export default function ProductPage() {
               {/* This div will render the HTML directly from Shopify/CSV. 
                   We use some basic styling to ensure it looks good. */}
               <div 
-                className="prose prose-sm md:prose-base prose-p:text-[#6B4C2A] prose-p:leading-relaxed prose-headings:text-[#2C1A0E] mx-auto text-left"
+                className="prose prose-sm md:prose-base prose-p:text-[#6B4C2A] prose-p:leading-relaxed prose-headings:text-[#2C1A0E] prose-img:max-w-[420px] prose-img:mx-auto prose-img:rounded-sm mx-auto text-left"
                 dangerouslySetInnerHTML={{ __html: product.bodyHtml }}
               />
 
