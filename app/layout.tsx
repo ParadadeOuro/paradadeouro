@@ -6,6 +6,7 @@ import CartDrawer from "@/components/CartDrawer";
 import ScrollRevealProvider from "@/components/ScrollRevealProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 const sancreek = Sancreek({
   weight: "400",
@@ -35,6 +36,7 @@ export default function RootLayout({
       className={`${sancreek.variable} ${sora.variable} h-full antialiased scroll-smooth`}
     >
       <body className="min-h-full bg-[#F8F5F0] text-[#232323] font-sans flex flex-col">
+        <AnalyticsTracker />
         <ScrollRevealProvider />
         <CartProvider>
           {children}

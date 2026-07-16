@@ -228,6 +228,50 @@ export default function CheckoutPage() {
     [tiktokContents]
   );
 
+  // --- View Checkout Event ---
+  useEffect(() => {
+    const sessionId = localStorage.getItem("po_session_id");
+    if (sessionId) {
+      fetch("/api/analytics/event", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          type: "view_checkout",
+          userAgent: window.navigator.userAgent,
+          referrer: document.referrer,
+        }),
+      }).catch(console.error);
+    }
+  }, []);
+
+  // --- Track Checkout Attempts (Abandoned Cart) ---
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const sessionId = localStorage.getItem("po_session_id");
+      if (!sessionId) return;
+      if (!form.name && !form.email && !form.phone && !form.cpf) return;
+
+      fetch("/api/analytics/checkout-attempt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          payerName: form.name,
+          payerEmail: form.email,
+          payerPhone: form.phone,
+          payerCpf: form.cpf,
+          cartItems: items,
+          cartTotalCents: Math.round(finalTotal * 100),
+          lastStep: completedSteps > 3 ? 3 : completedSteps,
+          userAgent: window.navigator.userAgent,
+        }),
+      }).catch(console.error);
+    }, 1500);
+
+    return () => clearTimeout(timeout);
+  }, [form.name, form.email, form.phone, form.cpf, items, finalTotal, completedSteps]);
+
   const updateField = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -427,6 +471,21 @@ export default function CheckoutPage() {
       const orderId = currentExternalRef;
       setCreatedOrderId(orderId);
 
+      // Track pix_generated
+      const sessionId = localStorage.getItem("po_session_id");
+      if (sessionId) {
+        fetch("/api/analytics/event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            type: "pix_generated",
+            orderRef: orderId,
+            userAgent: window.navigator.userAgent,
+          }),
+        }).catch(console.error);
+      }
+
       trackTikTokEvent(
         'Purchase',
         {
@@ -603,6 +662,21 @@ export default function CheckoutPage() {
       
       // Clear cart
       clearCart();
+      // Track paid
+      const sessionId = localStorage.getItem("po_session_id");
+      if (sessionId) {
+        fetch("/api/analytics/event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            type: "paid",
+            orderRef: dbOrderId,
+            userAgent: window.navigator.userAgent,
+          }),
+        }).catch(console.error);
+      }
+
       setCurrentStep('card-success');
       toast.success('Pedido processado com sucesso!');
       

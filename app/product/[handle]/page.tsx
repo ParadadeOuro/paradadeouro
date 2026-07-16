@@ -403,6 +403,25 @@ export default function ProductPage() {
 
   useEffect(() => { fetchProduct(); }, [fetchProduct]);
 
+  useEffect(() => {
+    if (product) {
+      const sessionId = localStorage.getItem("po_session_id");
+      if (sessionId) {
+        fetch("/api/analytics/event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            type: "view_product",
+            productHandle: product.handle,
+            userAgent: window.navigator.userAgent,
+            referrer: document.referrer,
+          }),
+        }).catch(console.error);
+      }
+    }
+  }, [product]);
+
   // Find matching variant from selected options
   const matchedVariant = product?.variants.find((v) =>
     product.optionNames.every((name) => v.options[name] === selectedOptions[name])
