@@ -243,16 +243,18 @@ function CatalogueContent() {
       <Navbar />
 
       {/* ── Page Header ─────────────────────────────────── */}
-      <section className="pt-32 pb-10 px-6 bg-[#2C1A0E] text-center">
-        <h1
-          className="font-display text-4xl md:text-5xl font-bold text-[#D4AF37] tracking-widest uppercase mb-3"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Catálogo
-        </h1>
-        <p className="text-[#C8B99A] text-sm tracking-widest uppercase">
-          Toda a nossa coleção em um só lugar
-        </p>
+      <section className="pt-40 pb-10 px-6 bg-[#2C1A0E]">
+        <div className="max-w-7xl mx-auto text-left">
+          <h1
+            className="font-display text-4xl md:text-5xl font-bold text-[#D4AF37] tracking-widest uppercase mb-3"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Catálogo
+          </h1>
+          <p className="text-[#C8B99A] text-sm tracking-widest uppercase">
+            Toda a nossa coleção em um só lugar
+          </p>
+        </div>
       </section>
 
       {/* ── Filters ─────────────────────────────────────── */}

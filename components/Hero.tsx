@@ -35,17 +35,19 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-brand-offwhite mb-6"
+            className="mb-8"
           >
-            Tradição <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-brand-tan">
-              Redefinida
-            </span>
-          </motion.h1>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/herotitle.png" 
+              alt="Parada de Ouro - Tradição Redefinida" 
+              className="w-full max-w-[340px] sm:max-w-[440px] md:max-w-[500px] h-auto object-contain"
+            />
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
