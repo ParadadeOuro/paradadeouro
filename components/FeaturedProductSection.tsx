@@ -111,7 +111,7 @@ export default function FeaturedProductSection() {
       const { createClient } = await import("@/utils/supabase/client");
       const supabase = createClient();
       
-      const bucket = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || "CSV File";
+      const bucket = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || "custom-images";
       const fileExt = file.name.split('.').pop();
       const fileName = `uploads/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       
