@@ -81,6 +81,27 @@ const getSpecsByProduct = (handle: string, type: string, title: string) => {
       { label: "Detalhes", value: "Trabalho entalhado à mão no couro" }
     ];
   }
+
+  if (h.includes("jaqueta") || h.includes("casaco") || t.includes("jaquetas") || t.includes("casacos") || tl.includes("jaqueta") || tl.includes("casaco")) {
+    if (h.includes("feminina") || tl.includes("feminina")) {
+      return [
+        { label: "Material", value: "Tecido tecnológico Softshell impermeável / Camurça premium" },
+        { label: "Medidas P", value: "Busto: 96 cm | Manga: 61 cm | Comprimento: 60 cm" },
+        { label: "Medidas M", value: "Busto: 102 cm | Manga: 62 cm | Comprimento: 62 cm" },
+        { label: "Medidas G", value: "Busto: 108 cm | Manga: 63 cm | Comprimento: 64 cm" },
+        { label: "Medidas GG", value: "Busto: 114 cm | Manga: 64 cm | Comprimento: 66 cm" },
+        { label: "Detalhes", value: "Acabamento reforçado de alta costura, zíperes de alta qualidade" }
+      ];
+    }
+    return [
+      { label: "Material", value: "Nylon resinado, Jeans premium ou Camurça bovina de alta qualidade" },
+      { label: "Medidas P", value: "Tórax: 112 cm | Manga: 65 cm | Comprimento: 68 cm" },
+      { label: "Medidas M", value: "Tórax: 118 cm | Manga: 66 cm | Comprimento: 70 cm" },
+      { label: "Medidas G", value: "Tórax: 124 cm | Manga: 67 cm | Comprimento: 72 cm" },
+      { label: "Medidas GG", value: "Tórax: 130 cm | Manga: 68 cm | Comprimento: 74 cm" },
+      { label: "Detalhes", value: "Forro confortável corta-vento e costuras reforçadas" }
+    ];
+  }
   
   return [
     { label: "Qualidade", value: "Matéria-prima premium selecionada" },
@@ -98,6 +119,9 @@ const getCareAndWarranty = (handle: string, title: string) => {
   }
   if (h.includes("bota") || h.includes("botina") || tl.includes("bota") || tl.includes("botina")) {
     return "Limpar com pano levemente úmido e sabão neutro. Deixar secar à sombra em local ventilado (nunca expor ao sol direto ou fontes de calor). Hidratar o couro periodicamente com pomadas específicas ou vaselina líquida. Garantia de 3 meses contra defeitos de fabricação e descolamento do solado.";
+  }
+  if (h.includes("jaqueta") || h.includes("casaco") || tl.includes("jaqueta") || tl.includes("casaco")) {
+    return "Recomendamos lavagem à mão ou ciclo delicado na máquina. Secar à sombra. Não passar ferro em temperaturas altas ou diretamente sobre bordados/estampas. Garantia de 3 meses contra defeitos de costura ou fabricação.";
   }
   return "Evite contato com água em abundância e produtos químicos. Para artigos de couro, hidrate anualmente com creme específico. Armazene em local seco e arejado. Garantia de 3 meses contra defeitos de fabricação.";
 };
@@ -384,6 +408,7 @@ export default function ProductPage() {
   );
 
   const isCaneca = product ? (product.handle.toLowerCase().includes("caneca") || product.title.toLowerCase().includes("caneca")) : false;
+  const hasImagesInDescription = product ? product.bodyHtml.toLowerCase().includes("<img") : false;
 
   // Get all unique values for each option
   function getOptionValues(name: string): string[] {
@@ -550,15 +575,22 @@ export default function ProductPage() {
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
                   ))}
-                  <span className="text-[#A89070] text-xs ml-1 font-semibold">4.9 (128 avaliações)</span>
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('avaliacoes-clientes')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="text-[#A89070] text-xs ml-1 font-semibold hover:text-[#D4AF37] transition-colors cursor-pointer"
+                  >
+                    4.9 (128 avaliações)
+                  </button>
                 </div>
                 
                 {product.bodyHtml && (
                   <>
                     <span className="text-[#E8E0D5] hidden sm:inline">|</span>
                     <button 
+                      type="button"
                       onClick={() => document.getElementById('descricao-produto')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="text-xs text-[#D4AF37] font-bold uppercase tracking-wider hover:text-[#C8A030] transition-colors flex items-center gap-1"
+                      className="bg-[#D6001C] hover:bg-[#B30014] text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm transition-colors flex items-center gap-1 shadow-sm cursor-pointer"
                     >
                       Ler descrição ↓
                     </button>
@@ -748,12 +780,14 @@ export default function ProductPage() {
               />
 
               {/* Mock space for an extra promotional image */}
-              <div className="mt-12 w-full h-64 md:h-96 bg-[#E8E0D5] rounded-sm flex flex-col items-center justify-center overflow-hidden relative group">
-                <div className="absolute inset-0 bg-brand-brown/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
-                <p className="text-[#A89070] text-sm uppercase tracking-widest z-0">Espaço para Imagem Descritiva</p>
-                {/* You can replace the src below with a real lifestyle image later */}
-                <img src={product.images[0]} alt="Lifestyle" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-              </div>
+              {hasImagesInDescription && (
+                <div className="mt-12 w-full h-64 md:h-96 bg-[#E8E0D5] rounded-sm flex flex-col items-center justify-center overflow-hidden relative group">
+                  <div className="absolute inset-0 bg-brand-brown/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                  <p className="text-[#A89070] text-sm uppercase tracking-widest z-0">Espaço para Imagem Descritiva</p>
+                  {/* You can replace the src below with a real lifestyle image later */}
+                  <img src={product.images[0]} alt="Lifestyle" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -813,80 +847,87 @@ export default function ProductPage() {
                 {getCareAndWarranty(product.handle, product.title)}
               </AccordionItem>
 
-              <AccordionItem
-                title="Avaliações de Clientes"
-                isOpen={openAccordion === "reviews"}
-                onToggle={() => setOpenAccordion(openAccordion === "reviews" ? null : "reviews")}
-              >
-                <div className="flex flex-col gap-6">
-                  <div className="flex items-center gap-4 border-b border-[#E8E0D5]/50 pb-4">
-                    <div className="flex items-center gap-1">
-                      <span className="text-2xl font-bold text-[#2C1A0E]">4.9</span>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-4 h-4 ${i === 4 ? "text-[#D4AF37]/50 fill-[#D4AF37]/50" : "text-[#D4AF37] fill-[#D4AF37]"}`} />
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-xs text-[#A89070] uppercase tracking-wider">Baseado em 128 avaliações</span>
-                  </div>
+            </div>
+          </div>
+        </div>
 
-                  {/* Mock Review 1 */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#2C1A0E] text-sm">Carlos A.</span>
-                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
-                      </div>
-                      <span className="text-xs text-[#A89070]">há 2 dias</span>
-                    </div>
-                    <div className="flex gap-0.5">
-                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
-                    </div>
-                    <p className="text-sm text-[#6B4C2A]">
-                      Produto excepcional! A qualidade do material me surpreendeu bastante. Comprei com um pouco de receio por ser a primeira vez, mas a entrega foi super rápida e o atendimento nota 10. Recomendo de olhos fechados.
-                    </p>
+        {/* ── Customer Reviews Section ───────────────────────────────────── */}
+        <div id="avaliacoes-clientes" className="bg-[#F8F5F0] border-t border-[#E8E0D5] py-16 scroll-mt-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <h2
+              className="font-display text-2xl font-bold text-[#2C1A0E] mb-8 text-center uppercase tracking-wider"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Avaliações de Clientes
+            </h2>
+            
+            <div className="bg-white p-6 md:p-8 rounded-sm shadow-sm border border-[#E8E0D5] flex flex-col gap-6">
+              <div className="flex items-center gap-4 border-b border-[#E8E0D5]/50 pb-4">
+                <div className="flex items-center gap-1">
+                  <span className="text-2xl font-bold text-[#2C1A0E]">4.9</span>
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i === 4 ? "text-[#D4AF37]/50 fill-[#D4AF37]/50" : "text-[#D4AF37] fill-[#D4AF37]"}`} />
+                    ))}
                   </div>
-
-                  {/* Mock Review 2 */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#2C1A0E] text-sm">Felipe M.</span>
-                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
-                      </div>
-                      <span className="text-xs text-[#A89070]">há 1 semana</span>
-                    </div>
-                    <div className="flex gap-0.5">
-                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
-                    </div>
-                    <p className="text-sm text-[#6B4C2A]">
-                      Excelente acabamento. Deu pra perceber que é feito com cuidado. A única coisa é que demorou 1 dia a mais do que o prazo estipulado pelos Correios, mas valeu a espera.
-                    </p>
-                  </div>
-
-                  {/* Mock Review 3 */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#2C1A0E] text-sm">Rodrigo S.</span>
-                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
-                      </div>
-                      <span className="text-xs text-[#A89070]">há 2 semanas</span>
-                    </div>
-                    <div className="flex gap-0.5">
-                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
-                    </div>
-                    <p className="text-sm text-[#6B4C2A]">
-                      Comprei pra dar de presente pro meu pai e ele ficou apaixonado. A embalagem vem muito bem feita e o produto é de primeira linha mesmo. Parabéns à equipe!
-                    </p>
-                  </div>
-                  
-                  <button className="mt-2 text-sm text-[#D4AF37] font-semibold hover:text-[#C8A030] text-left underline">
-                    Ver todas as avaliações
-                  </button>
                 </div>
-              </AccordionItem>
+                <span className="text-xs text-[#A89070] uppercase tracking-wider">Baseado em 128 avaliações</span>
+              </div>
+
+              {/* Mock Review 1 */}
+              <div className="flex flex-col gap-2 border-b border-[#E8E0D5]/30 pb-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-[#2C1A0E] text-sm">Carlos A.</span>
+                    <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
+                  </div>
+                  <span className="text-xs text-[#A89070]">há 2 dias</span>
+                </div>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
+                </div>
+                <p className="text-sm text-[#6B4C2A]">
+                  Produto excepcional! A qualidade do material me surpreendeu bastante. Comprei com um pouco de receio por ser a primeira vez, mas a entrega foi super rápida e o atendimento nota 10. Recomendo de olhos fechados.
+                </p>
+              </div>
+
+              {/* Mock Review 2 */}
+              <div className="flex flex-col gap-2 border-b border-[#E8E0D5]/30 pb-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-[#2C1A0E] text-sm">Felipe M.</span>
+                    <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
+                  </div>
+                  <span className="text-xs text-[#A89070]">há 1 semana</span>
+                </div>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
+                </div>
+                <p className="text-sm text-[#6B4C2A]">
+                  Excelente acabamento. Deu pra perceber que é feito com cuidado. A única coisa é que demorou 1 dia a mais do que o prazo estipulado pelos Correios, mas valeu a espera.
+                </p>
+              </div>
+
+              {/* Mock Review 3 */}
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-[#2C1A0E] text-sm">Rodrigo S.</span>
+                    <span className="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-semibold">Comprador Verificado</span>
+                  </div>
+                  <span className="text-xs text-[#A89070]">há 2 semanas</span>
+                </div>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />)}
+                </div>
+                <p className="text-sm text-[#6B4C2A]">
+                  Comprei pra dar de presente pro meu pai e ele ficou apaixonado. A embalagem vem muito bem feita e o produto é de primeira linha mesmo. Parabéns à equipe!
+                </p>
+              </div>
+              
+              <button className="mt-2 text-sm text-[#D4AF37] font-semibold hover:text-[#C8A030] text-left underline w-fit">
+                Ver todas as avaliações
+              </button>
             </div>
           </div>
         </div>
