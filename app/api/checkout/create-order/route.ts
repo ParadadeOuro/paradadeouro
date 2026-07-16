@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
       id: i.id,
       name: i.title,
       quantity: i.quantity,
-      priceInCents: Math.round(i.price * 100)
+      priceInCents: Math.round(i.price * 100),
+      selectedOptions: i.options || {}
     }));
 
     const { error: insertErr } = await supabaseAdmin

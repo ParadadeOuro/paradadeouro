@@ -1228,7 +1228,13 @@ function OrdersTab() {
             const rows = filtered.map((o: any) => {
               const items = Array.isArray(o.items) ? o.items : [];
               const a = o.delivery?.address ?? {};
-              const itemsStr = items.map((it: any) => `${it.quantity}× ${it.title ?? it.name ?? ""}${it.size ? ` (${it.size})` : ""}`).join(" | ");
+              const itemsStr = items.map((it: any) => {
+                const size = it.size ?? (it.selectedOptions?.Tamanho ?? it.selectedOptions?.Size ?? null);
+                const opts = it.selectedOptions ? Object.entries(it.selectedOptions)
+                  .filter(([k]) => k !== "Tamanho" && k !== "Size")
+                  .map(([k, v]) => `${k}: ${v}`).join(", ") : "";
+                return `${it.quantity}× ${it.title ?? it.name ?? ""}${size ? ` (${size})` : ""}${opts ? ` [${opts}]` : ""}`;
+              }).join(" | ");
               const qty = items.reduce((s: number, it: any) => s + (Number(it.quantity) || 0), 0);
               return [
                 o.id, o.external_ref ?? "", formatBR(o.created_at), o.paid_at ? formatBR(o.paid_at) : "",
@@ -1462,9 +1468,37 @@ function OrderDetailDialog({ orderId, onClose }: { orderId: string | null; onClo
                   const name = it.title ?? it.name ?? "Produto";
                   const size = it.size ?? (it.selectedOptions?.Tamanho ?? it.selectedOptions?.Size ?? null);
                   return (
-                    <li key={i} className="px-3 py-2.5 flex justify-between text-sm">
-                      <span className="text-gray-700">{qty}× {name}{size ? <span className="ml-1 text-xs text-gray-400">({size})</span> : null}</span>
-                      <span className="font-medium text-gray-900">{formatCurrency(lineCents / 100)}</span>
+                    <li key={i} className="px-3 py-2.5 flex flex-col gap-1 text-sm">
+                      <div className="flex justify-between w-full">
+                        <span className="text-gray-700">
+                          {qty}× {name}
+                          {size ? <span className="ml-1 text-xs text-gray-400">({size})</span> : null}
+                        </span>
+                        <span className="font-medium text-gray-900">{formatCurrency(lineCents / 100)}</span>
+                      </div>
+                      
+                      {it.selectedOptions && Object.keys(it.selectedOptions).length > 0 && (
+                        <div className="text-xs bg-gray-50 border border-gray-100 rounded p-2 mt-1 space-y-1">
+                          {Object.entries(it.selectedOptions).map(([key, val]: any) => {
+                            if (key === "Tamanho" || key === "Size") return null;
+                            if (key === "Imagem Personalizada" && val) {
+                              return (
+                                <div key={key} className="flex items-center gap-1.5">
+                                  <span className="text-gray-500 font-semibold">{key}:</span>
+                                  <a href={val} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline font-bold">
+                                    Ver Foto/Logo ↗
+                                  </a>
+                                </div>
+                              );
+                            }
+                            return (
+                              <div key={key} className="text-gray-700">
+                                <span className="text-gray-500 font-semibold">{key}:</span> "{val}"
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </li>
                   );
                 })}
