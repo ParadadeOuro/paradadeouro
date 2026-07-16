@@ -6,7 +6,7 @@ import { Lock, Mail, ShieldCheck } from "lucide-react";
 export const Route = createFileRoute("/painel-gr/login")({
   head: () => ({
     meta: [
-      { title: "Acesso restrito — Gol Raiz" },
+      { title: "Login — Painel Parada de Ouro" },
       { name: "robots", content: "noindex,nofollow,noarchive" },
     ],
   }),
@@ -56,15 +56,24 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0c0c0c] flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-white rounded-xl p-6 shadow-2xl">
-        <div className="flex items-center gap-2 mb-5">
-          <ShieldCheck className="w-5 h-5 text-[#FFCC00]" />
-          <h1 className="text-lg font-bold text-gray-900">Acesso restrito</h1>
+    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        {/* Logo / Brand */}
+        <div className="flex items-center gap-3 mb-8 justify-center">
+          <div className="w-10 h-10 bg-[#FFCC00] rounded-lg flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-black" />
+          </div>
+          <div>
+            <div className="text-white font-bold text-base leading-tight">Parada de Ouro</div>
+            <div className="text-[#FFCC00] text-[10px] font-semibold uppercase tracking-widest">Painel Admin</div>
+          </div>
         </div>
-        <p className="text-xs text-gray-500 mb-5">
-          Área administrativa. Apenas usuários autorizados.
-        </p>
+
+        <div className="bg-white rounded-xl p-6 shadow-2xl">
+          <h1 className="text-sm font-bold text-gray-900 mb-1">Acesso restrito</h1>
+          <p className="text-xs text-gray-500 mb-5">
+            Área administrativa. Apenas usuários autorizados.
+          </p>
 
         <form onSubmit={submit} className="space-y-3">
           <label className="block">
@@ -107,13 +116,14 @@ function LoginPage() {
           </button>
         </form>
 
-        <button
-          type="button"
-          onClick={() => { setMode(mode === "login" ? "signup" : "login"); setErr(null); setMsg(null); }}
-          className="mt-4 w-full text-xs text-gray-500 hover:text-gray-700"
-        >
-          {mode === "login" ? "Primeiro acesso? Criar conta" : "Já tenho conta. Fazer login"}
-        </button>
+          <button
+            type="button"
+            onClick={() => { setMode(mode === "login" ? "signup" : "login"); setErr(null); setMsg(null); }}
+            className="mt-4 w-full text-xs text-gray-500 hover:text-gray-700"
+          >
+            {mode === "login" ? "Primeiro acesso? Criar conta" : "Já tenho conta. Fazer login"}
+          </button>
+        </div>
       </div>
     </div>
   );

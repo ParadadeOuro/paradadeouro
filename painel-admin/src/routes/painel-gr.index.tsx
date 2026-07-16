@@ -139,61 +139,71 @@ function PainelPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#f6f7fb] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-xl p-6 border text-center space-y-4">
-          <ShieldCheck className="w-10 h-10 text-[#FFCC00] mx-auto" />
-          <h1 className="text-lg font-bold text-gray-900">Acesso pendente</h1>
-          <p className="text-sm text-gray-600">
-            Sua conta ainda não tem permissão de administrador. Se você é o primeiro acesso, clique abaixo.
-          </p>
+      <div className="min-h-screen bg-[#F6F7FB] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-xl p-8 border border-gray-200 text-center space-y-4">
+          <div className="w-12 h-12 bg-[#FFCC00] rounded-xl flex items-center justify-center mx-auto">
+            <ShieldCheck className="w-6 h-6 text-black" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-gray-900">Parada de Ouro — Painel Admin</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Sua conta ainda não tem permissão de administrador. Se você é o primeiro acesso, clique abaixo.
+            </p>
+          </div>
           {bootstrapError && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-2">{bootstrapError}</p>}
           <button onClick={handleBootstrap} disabled={bootstrapping}
-            className="w-full py-2.5 rounded-lg bg-black text-white font-semibold text-sm hover:bg-black/90 disabled:opacity-60">
+            className="w-full py-2.5 rounded-lg bg-[#0A0A0A] text-white font-semibold text-sm hover:bg-black/80 disabled:opacity-60">
             {bootstrapping ? "Configurando…" : "Tornar-me administrador"}
           </button>
-          <button onClick={logout} className="text-xs text-gray-500 hover:text-gray-700">Sair</button>
+          <button onClick={logout} className="text-xs text-gray-400 hover:text-gray-700">Sair</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f7fb]">
-      <div className="bg-white border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-2">
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Package className="w-5 h-5 text-[#FFCC00]" />
-            Painel Gol Raiz
-          </h1>
+    <div className="min-h-screen bg-[#F6F7FB]">
+      {/* ── Header Parada de Ouro ── */}
+      <div className="bg-[#0A0A0A] sticky top-0 z-10">
+        <div className="max-w-screen-2xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-[#FFCC00] rounded flex items-center justify-center">
+                <Package className="w-4 h-4 text-black" />
+              </div>
+              <div>
+                <div className="text-white font-bold text-sm leading-tight">Parada de Ouro</div>
+                <div className="text-[#FFCC00] text-[10px] font-semibold uppercase tracking-widest leading-tight">Painel Admin</div>
+              </div>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <AlertsBell />
             <Link
               to="/painel-gr/gateways"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/20 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">
               <CreditCard className="w-4 h-4" /> Gateways
             </Link>
-            <button onClick={logout} className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 px-2">
+            <button onClick={logout} className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white px-2">
               <LogOut className="w-4 h-4" /> Sair
             </button>
           </div>
-
         </div>
 
         {/* Tabs */}
-        <div className="container mx-auto px-4 flex gap-1 overflow-x-auto">
+        <div className="max-w-screen-2xl mx-auto px-4 flex gap-0 overflow-x-auto border-t border-white/10">
           {[
             { id: "overview" as Tab, label: "Visão Geral", icon: BarChart3 },
             { id: "live" as Tab, label: "Live View", icon: Radio },
-            { id: "abandoned" as Tab, label: "Carrinhos Abandonados", icon: ShoppingCart },
+            { id: "abandoned" as Tab, label: "Carrinhos", icon: ShoppingCart },
             { id: "cards" as Tab, label: "Cartões Pendentes", icon: CreditCard },
-            { id: "automation" as Tab, label: "Automação WhatsApp", icon: Zap },
-            { id: "automation_email" as Tab, label: "Automação Email", icon: Mail },
+            { id: "automation" as Tab, label: "WhatsApp", icon: Zap },
+            { id: "automation_email" as Tab, label: "Email", icon: Mail },
             { id: "orders" as Tab, label: "Pedidos", icon: Package },
             { id: "products" as Tab, label: "Top Produtos", icon: Trophy },
-            { id: "costs" as Tab, label: "Custos & Lucro", icon: TrendingUp },
+            { id: "costs" as Tab, label: "Custos", icon: TrendingUp },
             { id: "clarex" as Tab, label: "Clarex", icon: Film },
             { id: "tracking" as Tab, label: "Rastreios", icon: Truck },
-
           ].map((t) => {
             const Icon = t.icon;
             const active = tab === t.id;
@@ -201,20 +211,20 @@ function PainelPage() {
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium border-b-2 whitespace-nowrap transition ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${
                   active
-                    ? "border-[#FFCC00] text-gray-900"
-                    : "border-transparent text-gray-500 hover:text-gray-800"
+                    ? "border-[#FFCC00] text-[#FFCC00]"
+                    : "border-transparent text-white/50 hover:text-white/80"
                 }`}
               >
-                <Icon className="w-4 h-4" /> {t.label}
+                <Icon className="w-3.5 h-3.5" /> {t.label}
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="max-w-screen-2xl mx-auto px-4 py-6">
         {tab === "overview" && <OverviewTab />}
         {tab === "costs" && <CostsTab />}
         {tab === "live" && <LiveTab />}
@@ -224,7 +234,7 @@ function PainelPage() {
         {tab === "automation_email" && <EmailAutomationTab />}
         {tab === "orders" && <OrdersTab />}
         {tab === "products" && <ProductsTab />}
-        { tab === "clarex" && <ClarexTab />}
+        {tab === "clarex" && <ClarexTab />}
         {tab === "tracking" && <TrackingTab />}
       </div>
     </div>
@@ -1441,16 +1451,27 @@ function OrderDetailDialog({ orderId, onClose }: { orderId: string | null; onClo
 
             <section>
               <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500">Itens</h3>
-              <ul className="mt-2 divide-y divide-gray-100 border border-gray-200 rounded-lg">
-                {items.map((it, i) => (
-                  <li key={i} className="px-3 py-2 flex justify-between text-sm">
-                    <span className="text-gray-700">{it.quantity}× {it.name}</span>
-                    <span className="font-medium text-gray-900">{formatCurrency(((it.price ?? 0) * (it.quantity ?? 1)) / 100)}</span>
-                  </li>
-                ))}
+              <ul className="mt-2 divide-y divide-gray-100 border border-gray-200 rounded-lg bg-white">
+                {items.map((it: any, i: number) => {
+                  // price may be stored as reais (float) or cents (int) depending on payment flow
+                  const rawPrice = it.price ?? 0;
+                  // heuristic: if price > 1000 it's almost certainly in cents, otherwise reais
+                  const priceCents = rawPrice > 1000 ? rawPrice : Math.round(rawPrice * 100);
+                  const qty = it.quantity ?? 1;
+                  const lineCents = priceCents * qty;
+                  const name = it.title ?? it.name ?? "Produto";
+                  const size = it.size ?? (it.selectedOptions?.Tamanho ?? it.selectedOptions?.Size ?? null);
+                  return (
+                    <li key={i} className="px-3 py-2.5 flex justify-between text-sm">
+                      <span className="text-gray-700">{qty}× {name}{size ? <span className="ml-1 text-xs text-gray-400">({size})</span> : null}</span>
+                      <span className="font-medium text-gray-900">{formatCurrency(lineCents / 100)}</span>
+                    </li>
+                  );
+                })}
               </ul>
-              <div className="mt-3 flex justify-end text-sm">
-                <span className="font-semibold text-gray-900">Total: {formatCurrency(order.amount_cents / 100)}</span>
+              <div className="mt-3 flex justify-end items-center gap-2 text-sm">
+                <span className="text-gray-500">Total do pedido:</span>
+                <span className="font-bold text-gray-900 text-base">{formatCurrency(order.amount_cents / 100)}</span>
               </div>
             </section>
 
