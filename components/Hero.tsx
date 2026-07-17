@@ -1,20 +1,34 @@
 "use client";
 
+import { useRef, useEffect } from "react";
 import { ArrowRight, ShieldCheck, Gem, Compass } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch((err) => {
+        console.warn("Video autoplay failed or was blocked by browser:", err);
+      });
+    }
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-brown">
       {/* Background Video */}
       <video
+        ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] hover:scale-105"
       >
-        <source src="./herovideo.mp4" type="video/mp4" />
+        <source src="/herovideo.mp4" type="video/mp4" />
       </video>
       {/* Dark overlay gradients for contrast and luxury feeling */}
       <div className="absolute inset-0 bg-brand-brown/75 md:bg-brand-brown/65" />

@@ -677,8 +677,8 @@ export default function CheckoutPage() {
         }).catch(console.error);
       }
 
-      setCurrentStep('card-success');
       toast.success('Pedido processado com sucesso!');
+      router.push(`/thank-you?orderId=${dbOrderId}`);
       
     } catch (err: any) {
       console.error(err);
