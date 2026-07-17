@@ -25,9 +25,9 @@ export default function FeaturedProductBanner() {
   const activeImage = variants[selectedVariant].image;
 
   return (
-    <section className="py-16 bg-white text-[#2C1A0E] border-b border-[#E8E0D5]">
+    <section className="py-10 sm:py-16 bg-white text-[#2C1A0E] border-b border-[#E8E0D5]">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
           
           {/* Left Column: Image Showcase */}
           <div className="flex flex-col gap-6">
@@ -36,7 +36,7 @@ export default function FeaturedProductBanner() {
               <img
                 src={activeImage}
                 alt={`Caneca Rústica - ${variants[selectedVariant].title}`}
-                className="w-full h-full object-contain p-6 transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
               />
               {/* Badges */}
               <div className="absolute top-4 left-4 bg-[#D4AF37] text-white text-[10px] font-bold px-3 py-1 rounded-sm uppercase tracking-wider shadow-sm">
@@ -65,7 +65,7 @@ export default function FeaturedProductBanner() {
                       : "border-transparent opacity-50 hover:opacity-100"
                   }`}
                 >
-                  <img src={value.image} alt={value.title} className="w-full h-full object-contain p-1" />
+                  <img src={value.image} alt={value.title} className="w-full h-full object-cover object-top" />
                 </button>
               ))}
             </div>
@@ -77,7 +77,7 @@ export default function FeaturedProductBanner() {
               <p className="text-[#A89070] text-xs uppercase tracking-[0.25em] font-bold mb-2">
                 Destaque da Loja
               </p>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#2C1A0E] mb-2 leading-tight">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#2C1A0E] mb-2 leading-tight">
                 Caneca Térmica Rústica — Útil Para Bebidas Geladas e Quentes
               </h2>
               <div className="flex items-center gap-1.5">
@@ -92,14 +92,14 @@ export default function FeaturedProductBanner() {
               </div>
             </div>
 
-            <div className="flex items-baseline gap-4 py-2 border-y border-[#E8E0D5]">
-              <span className="text-3xl font-extrabold text-[#2C1A0E]">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5 py-2.5 border-y border-[#E8E0D5]">
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#2C1A0E] whitespace-nowrap">
                 R$ 97,50
               </span>
-              <span className="text-base text-[#A89070] line-through">
+              <span className="text-sm sm:text-base text-[#A89070] line-through whitespace-nowrap">
                 R$ 170,00
               </span>
-              <span className="text-xs bg-[#D4AF37]/10 text-[#6B4C2A] font-bold px-2 py-1 rounded-sm">
+              <span className="text-[10px] sm:text-xs bg-[#D4AF37]/10 text-[#6B4C2A] font-bold px-2.5 py-1 rounded-sm whitespace-nowrap">
                 Economize R$ 72,50
               </span>
             </div>
@@ -113,18 +113,18 @@ export default function FeaturedProductBanner() {
               <span className="text-xs uppercase tracking-widest text-[#6B4C2A] font-semibold block">
                 Escolha o Modelo: <span className="text-[#2C1A0E] font-bold">{variants[selectedVariant].title}</span>
               </span>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2 w-full">
                 {Object.keys(variants).map((key) => (
                   <button
                     key={key}
                     onClick={() => setSelectedVariant(key)}
-                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-sm border transition-all duration-200 cursor-pointer ${
+                    className={`px-2.5 py-2.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-sm border transition-all duration-200 cursor-pointer text-center flex items-center justify-center ${
                       selectedVariant === key
                         ? "bg-[#2C1A0E] border-[#2C1A0E] text-[#D4AF37] shadow-sm"
                         : "border-[#C8B99A] text-[#6B4C2A] hover:border-[#2C1A0E] hover:text-[#2C1A0E]"
                     }`}
                   >
-                    {key === "Gatilho" ? "Dedal / Gatilho" : key}
+                    {key === "Gatilho" ? "Gatilho" : key}
                   </button>
                 ))}
               </div>
